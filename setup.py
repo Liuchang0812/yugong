@@ -15,7 +15,7 @@ setup(
             'yugong=migrate_tool.main:main_'
         ],
         'storage_services': [
-            'localfs=migrate_tool.services.LocalFileSystem:make'
+            'localfs=migrate_tool.services.LocalFileSystem:LocalFileSystem'
         ]
    }
 )
