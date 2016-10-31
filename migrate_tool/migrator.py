@@ -39,13 +39,14 @@ class ThreadMigrator(BaseMigrator):
 
     def __init__(self, input_service, output_service, work_dir=None, threads=10, *args, **kwargs):
 
-        self._worker = Worker(threads_num=threads)
         self._input_service = input_service
         self._output_service = output_service
 
         self._work_dir = work_dir or os.getcwd()
         self._filter = Filter()
-        self._info_timer = None
+
+
+        self._worker = Worker(filter=self._filter, input_service=self._input_service, output_service=self._output_service, threads_num=threads)
 
         self._stop = False
         self._finish = False
