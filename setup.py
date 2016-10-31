@@ -5,7 +5,7 @@ setup(
     name='migrate_tool',
     version='0.0.1',
     packages=['migrate_tool', 'migrate_tool.services'],
-    url='',
+    url='https://www.qcloud.com/',
     license='MIT',
     author='liuchang',
     author_email='liuchang0812@gmail.com',

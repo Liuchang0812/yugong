@@ -36,8 +36,6 @@ class ThreadMigrator(BaseMigrator):
         self._output_service = None
         self._filter = None
 
-
-
         self._work_dir = path.join(kwargs['work_dir'] or os.getcwd(), 'migrate_dir')
         self._worker = Worker(*args, **kwargs)
         self._input_service = None
