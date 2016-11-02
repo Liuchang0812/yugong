@@ -7,7 +7,7 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 class Worker(object):
-    def __init__(self, work_dir, file_filter, input_service, output_service, threads_num=10, max_size=30):
+    def __init__(self, work_dir, file_filter, input_service, output_service, threads_num=5, max_size=30):
         self._input_service = input_service
         self._output_service = output_service
         self._filter = file_filter
@@ -23,11 +23,21 @@ class Worker(object):
     def __work_thread(self):
 
         while not self._stop:
+            logger.info("worker stop: " + str(self._stop))
             try:
-                task = self._queue.get(timeout=1)
+                logger.debug("try to get task")
+                task = self._queue.get_nowait()
+                logger.debug("get task succeefully")
                 self._queue.task_done()
             except Empty:
-                continue
+                logger.debug("Empty queue" + str(self._stop))
+                if self._stop:
+                    break
+                else:
+                    import time
+                    time.sleep(1)
+                    continue
+
             
             localpath = path.join(self._work_dir, task)
             try:
@@ -69,6 +79,7 @@ class Worker(object):
     def stop(self):
 
         self._stop = True
+        logger.info("set stop to True")
         # while any([t.is_alive() for t in self._threads_pool]):
         #     map(lambda i: i.join(5), filter(lambda j: j.is_alive(), self._threads_pool))
         #     print filter(lambda j: j.is_alive(), self._threads_pool)
