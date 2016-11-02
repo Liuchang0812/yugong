@@ -65,7 +65,10 @@ class Worker(object):
             try:
                 import os
                 os.remove(path.join(self._work_dir, task))
-                os.removedirs(path.dirname(path.join(self._work_dir, task)))
+                try:
+                    os.removedirs(path.dirname(path.join(self._work_dir, task)))
+                except OSError:
+                    pass
             except Exception as e:
                 logger.exception(str(e))
                 continue
