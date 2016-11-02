@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from Queue import Queue, Empty
 from threading import Thread
-from os import path
+from os import path, makedirs
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -24,11 +24,17 @@ class Worker(object):
 
         while not self._stop:
             try:
-                task = self._queue.get(timeout=3)
+                task = self._queue.get(timeout=1)
                 self._queue.task_done()
             except Empty:
                 continue
-
+            
+            localpath = path.join(self._work_dir, task)
+            try:
+                makedirs(path.dirname(localpath))
+            except OSError as e:
+                # directory is exists
+                logger.debug(str(e))
             try:
                 self._output_service.download(task, path.join(self._work_dir, task))
             except Exception as e:
@@ -64,7 +70,7 @@ class Worker(object):
 
         self._stop = True
         while any([t.is_alive() for t in self._threads_pool]):
-            map(lambda i: i.join(2), filter(lambda j: j.is_alive(), self._threads_pool))
+            map(lambda i: i.join(5), filter(lambda j: j.is_alive(), self._threads_pool))
 
     @property
     def success_num(self):

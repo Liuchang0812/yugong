@@ -7,7 +7,8 @@ import oss2
 class OssStorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
-
+        print args
+        print kwargs
         endpoint = kwargs['endpoint']
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
@@ -22,7 +23,7 @@ class OssStorageService(storage_service.StorageService):
 
     def list(self):
         for obj in oss2.ObjectIterator(self._oss_api):
-            yield obj
+            yield obj.key
 
     def exists(self, _path):
         raise NotImplementedError

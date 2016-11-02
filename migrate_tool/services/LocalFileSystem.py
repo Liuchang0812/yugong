@@ -23,6 +23,12 @@ class LocalFileSystem(storage_service.StorageService):
 
     def upload(self, path_, localpath):
         src_path = path.join(self._workspace, path_)
+        try:
+            import os
+            os.makedirs(path.dirname(src_path))
+        except OSError:
+            pass
+            
         import shutil
         return shutil.move(localpath, src_path)
 

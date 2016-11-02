@@ -33,13 +33,13 @@ def main_():
     conf = SafeConfigParser()
     conf.readfp(opt.conf)
 
-    input_service_conf  = dict(conf.items('source'))
-    output_service_conf = dict(conf.items('destination'))
+    output_service_conf  = dict(conf.items('source'))
+    input_service_conf = dict(conf.items('destination'))
 
     loads_services()
 
-    input_service = services_[input_service_conf['type']](input_service_conf)
-    output_service = services_[output_service_conf['type']](output_service_conf)
+    output_service = services_[output_service_conf['type']](**output_service_conf)
+    input_service = services_[input_service_conf['type']](**input_service_conf)
 
     migrator = ThreadMigrator(input_service=input_service, output_service=output_service, work_dir=conf.get('common', 'workspace'))
     migrator.start()
