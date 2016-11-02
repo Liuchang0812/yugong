@@ -5,6 +5,8 @@ from os import path, makedirs
 from logging import getLogger
 
 logger = getLogger(__name__)
+fail_logger = getLogger('migrate_tool.fail_file')
+
 
 class Worker(object):
     def __init__(self, work_dir, file_filter, input_service, output_service, threads_num=5, max_size=30):
@@ -38,7 +40,6 @@ class Worker(object):
                     time.sleep(1)
                     continue
 
-            
             localpath = path.join(self._work_dir, task)
             try:
                 makedirs(path.dirname(localpath))
@@ -50,6 +51,7 @@ class Worker(object):
             except Exception as e:
                 logger.exception(str(e))
                 self._fail += 1
+                fail_logger.error(task)
                 continue
 
             try:
@@ -57,6 +59,7 @@ class Worker(object):
             except Exception as e:
                 logger.exception("upload {} failed: {} ".format(task, str(e)))
                 self._fail += 1
+                fail_logger.error(task)
                 continue
 
             try:

@@ -11,8 +11,8 @@ from threading import Timer, Thread
 
 from migrate_tool.worker import Worker
 from migrate_tool.filter import Filter
-basicConfig(stream=stderr, level=DEBUG)
-logger = getLogger('__name__')
+
+logger = getLogger(__name__)
 
 
 class BaseMigrator(object):

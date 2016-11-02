@@ -5,6 +5,7 @@ from migrate_tool import storage_service
 from qcloud_cos import CosClient
 from qcloud_cos import UploadFileRequest
 
+
 class CosV4StorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):

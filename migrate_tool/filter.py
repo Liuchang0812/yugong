@@ -4,6 +4,7 @@ import leveldb
 from os import path
 from time import time
 
+
 class Filter(object):
 
     def __init__(self, work_dir):

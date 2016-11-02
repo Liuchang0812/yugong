@@ -4,8 +4,6 @@
 from migrate_tool import storage_service
 from qiniu import Auth
 
-q = Auth(access_key, secret_key)
-
 
 class QiniuStorageService(storage_service.StorageService):
 

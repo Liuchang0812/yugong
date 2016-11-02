@@ -9,9 +9,7 @@ import os
 
 from migrate_tool.migrator import ThreadMigrator
 
-basicConfig(stream=stderr, level=DEBUG)
 logger = getLogger(__name__)
-
 
 services_ = {}
 
@@ -27,6 +25,7 @@ def create_parser():
     parser_.add_argument('-c', '--conf', type=file, required=True, help="specify your config")
     return parser_
 
+
 def main_():
 
     parser = create_parser()
@@ -36,6 +35,10 @@ def main_():
 
     output_service_conf  = dict(conf.items('source'))
     input_service_conf = dict(conf.items('destination'))
+    if conf.has_option('common', 'threads'):
+        _threads = conf.getint('common', 'threads')
+    else:
+        _threads = 10
 
     loads_services()
 
@@ -43,7 +46,8 @@ def main_():
     output_service = services_[output_service_conf['type']](**output_service_conf)
     input_service = services_[input_service_conf['type']](**input_service_conf)
 
-    migrator = ThreadMigrator(input_service=input_service, output_service=output_service, work_dir=conf.get('common', 'workspace'))
+
+    migrator = ThreadMigrator(input_service=input_service, output_service=output_service, work_dir=conf.get('common', 'workspace'), threads=_threads)
     migrator.start()
 
     import time
