@@ -6,10 +6,51 @@ from logging import getLogger, basicConfig, DEBUG
 from sys import stderr
 from argparse import ArgumentParser
 import os
+from os import path
 
 from migrate_tool.migrator import ThreadMigrator
 
-logger = getLogger(__name__)
+from logging.config import dictConfig
+
+log_config = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+        'error': {
+            'format': '%(asctime)s\t%(message)s'
+        }
+    },
+    'handlers': {
+        'default': {
+            'level': 'INFO',
+            'formatter': 'standard',
+            'class': 'logging.StreamHandler',
+        },
+        'error_file': {
+            'level': 'INFO',
+            'formatter': 'error',
+            'class': 'logging.FileHandler',
+            'filename': 'fail_files.txt',
+            'mode': 'a'
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'migrate_tool.fail_file': {
+            'handlers': ['error_file'],
+            'level': 'WARN',
+            'propagate': False
+        },
+    }
+}
+
 
 services_ = {}
 
@@ -39,10 +80,11 @@ def main_():
         _threads = conf.getint('common', 'threads')
     else:
         _threads = 10
+    workspace_ = conf.get('common', 'workspace')
+    os.makedirs(workspace_)
+    log_config['handlers']['error_file']['filename'] = path.join(workspace_, 'failed_files.txt')
 
     loads_services()
-
-    os.makedirs(conf.get('common', 'workspace'))
     output_service = services_[output_service_conf['type']](**output_service_conf)
     input_service = services_[input_service_conf['type']](**input_service_conf)
 
