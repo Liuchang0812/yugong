@@ -81,7 +81,11 @@ def main_():
     else:
         _threads = 10
     workspace_ = conf.get('common', 'workspace')
-    os.makedirs(workspace_)
+    try:
+        os.makedirs(workspace_)
+    except OSError:
+        pass
+    
     log_config['handlers']['error_file']['filename'] = path.join(workspace_, 'failed_files.txt')
 
     loads_services()
