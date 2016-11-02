@@ -40,5 +40,5 @@ class StorageService(object):
         pass
 
     @abstractmethod
-    def list(self, path=None):
+    def list(self):
         pass

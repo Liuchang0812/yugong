@@ -4,10 +4,14 @@ from __future__ import absolute_import
 import os
 from os import path
 from logging import getLogger
+from logging import getLogger, basicConfig, DEBUG
+from sys import stderr
+import time
 from threading import Timer, Thread
 
 from migrate_tool.worker import Worker
 from migrate_tool.filter import Filter
+basicConfig(stream=stderr, level=DEBUG)
 logger = getLogger('__name__')
 
 
@@ -23,7 +27,7 @@ class BaseMigrator(object):
     def status(self):
         """ Query migrate status
 
-        :return: dict like {'success': 213, 'failure': 19}
+        :return: dict like {'success': 213, 'failure': 19, 'state': 'running'}
         """
         pass
 
@@ -43,25 +47,26 @@ class ThreadMigrator(BaseMigrator):
         self._output_service = output_service
 
         self._work_dir = work_dir or os.getcwd()
-        self._filter = Filter()
+        self._filter = Filter(self._work_dir)
 
-
-        self._worker = Worker(filter=self._filter, input_service=self._input_service, output_service=self._output_service, threads_num=threads)
+        self._worker = Worker(work_dir=self._work_dir, file_filter=self._filter, input_service=self._input_service, output_service=self._output_service, threads_num=threads)
 
         self._stop = False
         self._finish = False
         self._threads = []
-        #if path.exists(path.join(self._work_dir, 'filter.json')):
+
+        # if path.exists(path.join(self._work_dir, 'filter.json')):
         #    with open(path.join(self._work_dir, 'filter.json'), 'r') as f:
         #       self._filter.loads(f.read())
         #        logger.info("loads bloom filter snapshot successfully.")
 
     def log_status_thread(self):
-        while not self._stop and not self._finish:
-            logger.info("yugong is working, {} tasks successfully, {} tasks failed.".format(self._worker.success_num, self._worker.failure_num()))
+        while not self._stop:
+            logger.info("yugong is working, {} tasks successfully, {} tasks failed.".format(self._worker.success_num, self._worker.failure_num))
+            time.sleep(3)
 
     def work_thread(self):
-        assert self._output_service is None
+        assert self._output_service is not None
 
         for object_name in self._output_service.list():
 
@@ -91,8 +96,23 @@ class ThreadMigrator(BaseMigrator):
         for t in self._threads:
             t.start()
 
+        self._worker.start()
+
     def stop(self):
         self._stop = True
 
         for t in self._threads:
             t.join()
+        self._worker.stop()
+
+    def status(self):
+        return {'success': 10, 'fail': 1, 'state': 'running'}
+
+if __name__ == '__main__':
+    from migrate_tool.services.LocalFileSystem import LocalFileSystem
+    migrator = ThreadMigrator(input_service=LocalFileSystem(workspace='F:\\Workspace\\tmp'), output_service=LocalFileSystem(workspace='F:\\logstash-conf'))
+    migrator.start()
+
+    import time
+    time.sleep(10)
+    migrator.stop()

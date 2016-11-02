@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, with_statement
+import os
+from os import path
 
 from migrate_tool import storage_service
 
@@ -10,30 +12,22 @@ class LocalFileSystem(storage_service.StorageService):
         self._workspace = kwargs['workspace']
         print(self._workspace)
 
-    def exists(self, path):
-        from os import path
-        rt = path.join(self._workspace, path)
+    def exists(self, path_):
+        rt = path.join(self._workspace, path_)
         return path.exists(rt)
 
-    def download(self, path, localpath):
-        src_path = path.join(self._workspace, path)
+    def download(self, path_, localpath):
+        src_path = path.join(self._workspace, path_)
         import shutil
         return shutil.move(src_path, localpath)
 
-    def upload(self, path, localpath):
-        src_path = path.join(self._workspace, path)
+    def upload(self, path_, localpath):
+        src_path = path.join(self._workspace, path_)
         import shutil
         return shutil.move(localpath, src_path)
 
-    def list(self, path=None):
-
-        from os import path as path_
-        if path is not None:
-            src_path = path_.join(self._workspace, path)
-        else:
-            src_path = self._workspace
-        print("WordDir: " + src_path)
-        return os.listdir(src_path)
+    def list(self):
+        return os.listdir(self._workspace)
 
 def make():
     """ hook function for entrypoints

@@ -10,4 +10,4 @@ class Filter(object):
         pass
 
     def query(self, value):
-        return True
+        return False
