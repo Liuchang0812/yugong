@@ -85,9 +85,10 @@ def main_():
         os.makedirs(workspace_)
     except OSError:
         pass
-    
-    log_config['handlers']['error_file']['filename'] = path.join(workspace_, 'failed_files.txt')
 
+    log_config['handlers']['error_file']['filename'] = path.join(workspace_, 'failed_files.txt')
+    dictConfig(log_config)
+    
     loads_services()
     output_service = services_[output_service_conf['type']](**output_service_conf)
     input_service = services_[input_service_conf['type']](**input_service_conf)
