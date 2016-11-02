@@ -55,7 +55,7 @@ class Worker(object):
             try:
                 self._input_service.upload(task, path.join(self._work_dir, task))
             except Exception as e:
-                logger.exception(str(e))
+                logger.exception("upload {} failed: {} ".format(task, str(e)))
                 self._fail += 1
                 continue
 
