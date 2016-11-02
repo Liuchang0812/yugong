@@ -4,7 +4,7 @@
 from migrate_tool import storage_service
 import oss2
 
-class OssStorageService(storage_service):
+class OssStorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
 
@@ -23,3 +23,6 @@ class OssStorageService(storage_service):
     def list(self):
         for obj in oss2.ObjectIterator(self._oss_api):
             yield obj
+
+    def exists(self, _path):
+        raise NotImplementedError
