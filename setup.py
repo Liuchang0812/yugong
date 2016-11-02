@@ -16,7 +16,8 @@ setup(
         ],
         'storage_services': [
             'localfs=migrate_tool.services.LocalFileSystem:LocalFileSystem',
-            'oss=migrate_tool.services.oss:OssStorageService'
+            'oss=migrate_tool.services.oss:OssStorageService',
+            'cosv4=migrate_tool.services.cosv4:CosV4StorageService'
         ]
    }
 )
