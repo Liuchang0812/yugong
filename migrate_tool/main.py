@@ -5,6 +5,7 @@ from ConfigParser import SafeConfigParser
 from logging import getLogger, basicConfig, DEBUG
 from sys import stderr
 from argparse import ArgumentParser
+import os
 
 from migrate_tool.migrator import ThreadMigrator
 
@@ -38,6 +39,7 @@ def main_():
 
     loads_services()
 
+    os.makedirs(conf.get('common', 'workspace'))
     output_service = services_[output_service_conf['type']](**output_service_conf)
     input_service = services_[input_service_conf['type']](**input_service_conf)
 

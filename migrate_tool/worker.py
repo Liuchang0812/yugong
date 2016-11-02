@@ -59,12 +59,12 @@ class Worker(object):
                 self._fail += 1
                 continue
 
-            # try:
-            #     import shutil
-            #     shutil.rmtree(path.join(self._work_dir, task))
-            # except Exception as e:
-            #     logger.exception(str(e))
-            #     continue
+            try:
+                import os
+                os.removedirs(path.join(self._work_dir, task))
+            except Exception as e:
+                logger.exception(str(e))
+                continue
             self._succ += 1
             self._filter.add(task)
 
