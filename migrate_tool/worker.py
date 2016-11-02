@@ -69,9 +69,12 @@ class Worker(object):
     def stop(self):
 
         self._stop = True
-        while any([t.is_alive() for t in self._threads_pool]):
-            map(lambda i: i.join(5), filter(lambda j: j.is_alive(), self._threads_pool))
+        # while any([t.is_alive() for t in self._threads_pool]):
+        #     map(lambda i: i.join(5), filter(lambda j: j.is_alive(), self._threads_pool))
+        #     print filter(lambda j: j.is_alive(), self._threads_pool)
 
+        map(lambda i: i.join(), self._threads_pool)
+        
     @property
     def success_num(self):
         return self._succ
