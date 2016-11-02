@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import absolute_import
 import pkg_resources
 from ConfigParser import SafeConfigParser
 from logging import getLogger, basicConfig, DEBUG
 from sys import stderr
-basicConfig(stream=stderr, level=DEBUG)
+from argparse import ArgumentParser
 
+from migrate_tool.migrator import ThreadMigrator
+
+basicConfig(stream=stderr, level=DEBUG)
 logger = getLogger(__name__)
 
-from argparse import ArgumentParser
 
 services_ = {}
 
@@ -31,11 +33,26 @@ def main_():
     conf = SafeConfigParser()
     conf.readfp(opt.conf)
 
-    logger.debug(str(conf.options('source')))
-
     input_service_conf  = dict(conf.items('source'))
     output_service_conf = dict(conf.items('destination'))
 
+    loads_services()
+
+    input_service = services_[input_service_conf['type']](input_service_conf)
+    output_service = services_[output_service_conf['type']](output_service_conf)
+
+    migrator = ThreadMigrator(input_service=input_service, output_service=output_service, work_dir=conf.get('common', 'workspace'))
+    migrator.start()
+
+    import time
+    while True:
+        state = migrator.status()
+
+        if state['finish']:
+            break
+        time.sleep(3)
+
+    migrator.stop()
 
 if __name__ == '__main__':
     main_()

@@ -106,7 +106,7 @@ class ThreadMigrator(BaseMigrator):
         self._worker.stop()
 
     def status(self):
-        return {'success': 10, 'fail': 1, 'state': 'running'}
+        return {'success': 10, 'fail': 1, 'finish': self._finish}
 
 if __name__ == '__main__':
     from migrate_tool.services.LocalFileSystem import LocalFileSystem
