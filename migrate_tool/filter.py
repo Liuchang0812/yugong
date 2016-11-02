@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 
+import leveldb
+from os import path
+from time import time
+
 class Filter(object):
-    """TODO: use sqlite to filter files which are migrated"""
 
     def __init__(self, work_dir):
         self._workdir = work_dir
+        self._db = leveldb.LevelDB(path.join(self._workdir, 'leveldb'))
 
     def add(self, value):
-        pass
+        self._db.Put(value, str(time()))
 
     def query(self, value):
-        return False
+        try:
+            self._db.Get(value)
+            return True
+        except KeyError:
+            return False

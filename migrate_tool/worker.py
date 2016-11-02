@@ -66,6 +66,7 @@ class Worker(object):
             #     logger.exception(str(e))
             #     continue
             self._succ += 1
+            self._filter.add(task)
 
     def add_task(self, task):
         # blocking
