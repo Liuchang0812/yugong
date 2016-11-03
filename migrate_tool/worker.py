@@ -40,40 +40,45 @@ class Worker(object):
                     time.sleep(1)
                     continue
 
-            localpath = path.join(self._work_dir, task)
+            if isinstance(task, map):
+                task_path = task['store_path']
+            else:
+                task_path = task
+
+            localpath = path.join(self._work_dir, task_path)
             try:
                 makedirs(path.dirname(localpath))
             except OSError as e:
                 # directory is exists
                 logger.debug(str(e))
             try:
-                self._output_service.download(task, path.join(self._work_dir, task))
+                self._output_service.download(task, path.join(self._work_dir, task_path))
             except Exception as e:
                 logger.exception(str(e))
                 self._fail += 1
-                fail_logger.error(task)
+                fail_logger.error(task_path)
                 continue
 
             try:
-                self._input_service.upload(task, path.join(self._work_dir, task))
+                self._input_service.upload(task_path, path.join(self._work_dir, task_path))
             except Exception as e:
                 logger.exception("upload {} failed: {} ".format(task, str(e)))
                 self._fail += 1
-                fail_logger.error(task)
+                fail_logger.error(task_path)
                 continue
 
             try:
                 import os
-                os.remove(path.join(self._work_dir, task))
+                os.remove(path.join(self._work_dir, task_path))
                 try:
-                    os.removedirs(path.dirname(path.join(self._work_dir, task)))
+                    os.removedirs(path.dirname(path.join(self._work_dir, task_path)))
                 except OSError:
                     pass
             except Exception as e:
                 logger.exception(str(e))
                 continue
             self._succ += 1
-            self._filter.add(task)
+            self._filter.add(task_path)
 
     def add_task(self, task):
         # blocking
