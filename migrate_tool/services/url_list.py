@@ -14,7 +14,7 @@ class UrlListService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
         self._url_list_file = kwargs['url_list_file']
-        self._timeout = kwargs['timeout']
+        self._timeout = float(kwargs['timeout'])
         self._chunk_size = 1024
 
     def download(self, task, local_path):
@@ -42,7 +42,7 @@ class UrlListService(storage_service.StorageService):
                     ret = urlparse.urlparse(line)
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
-                    yield {'store_path': ret.path, 'url_path': line}
+                    yield {'store_path': ret.path.strip(), 'url_path': line.strip()}
                 except Exception:
                     logger.warn("{} is invalid".format(line))
 

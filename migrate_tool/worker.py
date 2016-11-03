@@ -25,11 +25,11 @@ class Worker(object):
     def __work_thread(self):
 
         while not self._stop:
-            logger.info("worker stop: " + str(self._stop))
+            # logger.info("worker stop: " + str(self._stop))
             try:
-                logger.debug("try to get task")
+                # logger.debug("try to get task")
                 task = self._queue.get_nowait()
-                logger.debug("get task succeefully")
+                # logger.debug("get task succeefully")
                 self._queue.task_done()
             except Empty:
                 logger.debug("Empty queue" + str(self._stop))
@@ -40,11 +40,13 @@ class Worker(object):
                     time.sleep(1)
                     continue
 
-            if isinstance(task, map):
+            if isinstance(task, dict):
                 task_path = task['store_path']
             else:
                 task_path = task
-
+        
+            if task_path.startswith('/'):
+                task_path = task_path[1:]
             localpath = path.join(self._work_dir, task_path)
             try:
                 makedirs(path.dirname(localpath))
@@ -52,7 +54,7 @@ class Worker(object):
                 # directory is exists
                 logger.debug(str(e))
             try:
-                self._output_service.download(task, path.join(self._work_dir, task_path))
+                self._output_service.download(task, localpath)
             except Exception as e:
                 logger.exception(str(e))
                 self._fail += 1
@@ -60,7 +62,7 @@ class Worker(object):
                 continue
 
             try:
-                self._input_service.upload(task_path, path.join(self._work_dir, task_path))
+                self._input_service.upload(task_path, localpath)
             except Exception as e:
                 logger.exception("upload {} failed: {} ".format(task, str(e)))
                 self._fail += 1
@@ -69,9 +71,9 @@ class Worker(object):
 
             try:
                 import os
-                os.remove(path.join(self._work_dir, task_path))
+                os.remove(localpath)
                 try:
-                    os.removedirs(path.dirname(path.join(self._work_dir, task_path)))
+                    os.removedirs(path.dirname(localpath))
                 except OSError:
                     pass
             except Exception as e:

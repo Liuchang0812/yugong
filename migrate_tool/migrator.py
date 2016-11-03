@@ -73,9 +73,12 @@ class ThreadMigrator(BaseMigrator):
             if self._stop:
                 break
 
-            if self._filter.query(object_name):
+            if isinstance(object_name, dict):
+                object_name_ = object_name['store_path']
+
+            if self._filter.query(object_name_):
                 # object had been migrated
-                logger.info("{} has been migrated, skip it".format(object_name))
+                logger.info("{} has been migrated, skip it".format(object_name_))
 
             else:
                 # not migrated
