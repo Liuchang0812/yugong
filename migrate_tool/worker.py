@@ -47,6 +47,10 @@ class Worker(object):
         
             if task_path.startswith('/'):
                 task_path = task_path[1:]
+
+            if isinstance(task_path, str):
+                task_path = task_path.decode('utf-8')
+
             localpath = path.join(self._work_dir, task_path)
             try:
                 makedirs(path.dirname(localpath))
@@ -56,7 +60,7 @@ class Worker(object):
             try:
                 self._output_service.download(task, localpath)
             except Exception as e:
-                logger.exception(str(e))
+                logger.exception("download failed")
                 self._fail += 1
                 fail_logger.error(task_path)
                 continue
@@ -64,13 +68,16 @@ class Worker(object):
             try:
                 self._input_service.upload(task_path, localpath)
             except Exception as e:
-                logger.exception("upload {} failed: {} ".format(task, str(e)))
+                logger.exception("upload {} failed".format(task_path.encode('utf-8')))
                 self._fail += 1
                 fail_logger.error(task_path)
                 continue
 
             try:
                 import os
+                if isinstance(localpath, unicode):
+                    localpath = localpath.encode('utf-8')
+
                 os.remove(localpath)
                 try:
                     os.removedirs(path.dirname(localpath))

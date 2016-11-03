@@ -12,10 +12,14 @@ class Filter(object):
         self._db = leveldb.LevelDB(path.join(self._workdir, 'leveldb'))
 
     def add(self, value):
+        if isinstance(value, unicode):
+            value = value.encode('utf-8')
         self._db.Put(value, str(time()))
 
     def query(self, value):
         try:
+            if isinstance(value, unicode):
+                value = value.encode('utf-8')
             self._db.Get(value)
             return True
         except KeyError:

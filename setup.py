@@ -17,6 +17,7 @@ setup(
         'storage_services': [
             'localfs=migrate_tool.services.LocalFileSystem:LocalFileSystem',
             'oss=migrate_tool.services.oss:OssStorageService',
+            'qiniu=migrate_tool.services.qiniu:QiniuStorageService',
             'cosv4=migrate_tool.services.cosv4:CosV4StorageService',
             'url=migrate_tool.services.url_list:UrlListService',
         ]

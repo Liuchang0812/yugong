@@ -75,6 +75,11 @@ class ThreadMigrator(BaseMigrator):
 
             if isinstance(object_name, dict):
                 object_name_ = object_name['store_path']
+            else:
+                object_name_ = object_name
+
+            if isinstance(object_name_, unicode):
+                object_name_ = object_name_.encode('utf-8')
 
             if self._filter.query(object_name_):
                 # object had been migrated
@@ -82,8 +87,9 @@ class ThreadMigrator(BaseMigrator):
 
             else:
                 # not migrated
-                self._worker.add_task(object_name)
-                logger.info("{} has been submitted, waiting for migrating".format(object_name))
+                self._worker.add_task(object_name_)
+                print type(object_name_), object_name_
+                logger.info("{} has been submitted, waiting for migrating".format(object_name_))
         else:
             self._finish = True
 

@@ -11,6 +11,9 @@ from os import path
 from migrate_tool.migrator import ThreadMigrator
 
 from logging.config import dictConfig
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8') 
 
 log_config = {
     'version': 1,
@@ -98,13 +101,19 @@ def main_():
     migrator.start()
 
     import time
-    while True:
-        state = migrator.status()
+    try:
+        while True:
+            state = migrator.status()
 
-        if state['finish']:
-            break
-        time.sleep(3)
+            if state['finish']:
+                break
+            time.sleep(3)
+    except KeyboardInterrupt:
+        break
 
+    state = migrator.status()
+    print state
+        
     migrator.stop()
 
 if __name__ == '__main__':

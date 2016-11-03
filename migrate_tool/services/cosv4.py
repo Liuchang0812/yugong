@@ -34,7 +34,11 @@ class CosV4StorageService(storage_service.StorageService):
         if self._prefix_dir:
             cos_path = self._prefix_dir + cos_path
 
-        upload_request = UploadFileRequest(self._bucket, unicode(cos_path), unicode(local_path))
+
+        if isinstance(local_path, unicode):
+            local_path.encode('utf-8')
+
+        upload_request = UploadFileRequest(self._bucket, unicode(cos_path), local_path)
         upload_file_ret = self._cos_api.upload_file(upload_request)
 
         if upload_file_ret[u'code'] != 0:

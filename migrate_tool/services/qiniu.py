@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from logging import getLogger
 from migrate_tool import storage_service
@@ -21,19 +22,28 @@ class QiniuStorageService(storage_service.StorageService):
         self._qiniu_api = BucketManager(self._auth)
 
     def download(self, cos_path, local_path):
+        if isinstance(local_path, str):
+            local_path = local_path.decode('utf-8')
         if cos_path.startswith('/'):
             cos_path = cos_path[1:]
 
+        if isinstance(cos_path, unicode):
+            cos_path = cos_path.encode('utf-8')
+            from urllib import quote
+            cos_path = quote(cos_path)
+
         base_url = 'http://%s/%s' % (self._domain, cos_path)
-        private_url = q.private_download_url(base_url, expires=3600)
+        print base_url
+        private_url = self._auth.private_download_url(base_url, expires=3600)
+        print private_url
         logger.debug("private url: " + private_url)
 
         ret = requests.get(private_url)
 
-        if ret.status_code == 200:
+        if ret.status_code != 200:
             raise SystemError("download file from qiniu failed")
-
-        with open(local_path, 'wb') as fd:
+        print local_path.encode('utf-8')
+        with open(local_path.encode('utf-8'), 'wb') as fd:
             for chunk in ret.iter_content(1024):
                 fd.write(chunk)
 
@@ -51,13 +61,15 @@ class QiniuStorageService(storage_service.StorageService):
         while not eof:
             try:
                 ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
-                for i in ret['item']:
+                for i in ret['items']:
                     yield i['key']
 
-                if eof:
+                if eof and 'marker' in ret:
                     marker = ret['marker']
+                else:
+                    eof = True
             except Exception as e:
-                logger.warn("list exception: " + str(e))
+                logger.exception("list exception: " + str(e))
 
     def exists(self, _path):
         raise NotImplementedError
