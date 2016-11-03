@@ -79,6 +79,7 @@ class ThreadMigrator(BaseMigrator):
                 object_name_ = object_name
 
             if isinstance(object_name_, unicode):
+                logger.info("object_name is unicode: " + repr(object_name_))
                 object_name_ = object_name_.encode('utf-8')
 
             if self._filter.query(object_name_):
@@ -107,15 +108,19 @@ class ThreadMigrator(BaseMigrator):
 
         self._worker.start()
 
-    def stop(self):
+    def stop(self, force=False):
+        if force:
+            self._worker.term()
+        else:
+            self._worker.stop()
+
         self._stop = True
 
         for t in self._threads:
             t.join()
-        self._worker.stop()
 
     def status(self):
-        return {'success': 10, 'fail': 1, 'finish': self._finish}
+        return {'success': self._worker.success_num, 'fail': self._worker.failure_num, 'finish': self._finish}
 
 if __name__ == '__main__':
     from migrate_tool.services.LocalFileSystem import LocalFileSystem

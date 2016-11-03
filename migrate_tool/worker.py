@@ -86,6 +86,11 @@ class Worker(object):
             except Exception as e:
                 logger.exception(str(e))
                 continue
+            if isinstance(task_path, unicode):
+                logger.info("inc succ with {}".format(task_path.encode('utf-8')))
+            else:
+                logger.info("inc succ with {}".format(task_path.encode('utf-8')))
+
             self._succ += 1
             self._filter.add(task_path)
 
@@ -99,7 +104,11 @@ class Worker(object):
             t.start()
 
     def stop(self):
+        
+        self._queue.join()
+        self.term()
 
+    def term(self):
         self._stop = True
         logger.info("set stop to True")
         # while any([t.is_alive() for t in self._threads_pool]):
@@ -107,6 +116,8 @@ class Worker(object):
         #     print filter(lambda j: j.is_alive(), self._threads_pool)
 
         map(lambda i: i.join(), self._threads_pool)
+
+
         
     @property
     def success_num(self):

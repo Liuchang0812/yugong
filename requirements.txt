@@ -1,5 +1,7 @@
 crcmod==1.7
 leveldb==0.194
+migrate-tool==0.0.1
 oss2==2.2.0
 qcloud-cos-v4==0.0.5
+qiniu==7.0.9.1
 requests==2.11.1
