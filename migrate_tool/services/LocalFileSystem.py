@@ -10,7 +10,6 @@ class LocalFileSystem(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
         self._workspace = kwargs['workspace']
-        print(self._workspace)
 
     def exists(self, path_):
         rt = path.join(self._workspace, path_)

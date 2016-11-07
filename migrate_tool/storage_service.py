@@ -41,4 +41,7 @@ class StorageService(object):
 
     @abstractmethod
     def list(self):
+        """
+        :return: iterator for 'a/b/c.txt', 'a/b/d.txt', not starts with '/'
+        """
         pass
