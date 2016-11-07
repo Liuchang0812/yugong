@@ -1,4 +1,4 @@
-yugong
+cos_migrate_tool
 #############
 
 .. image:: https://travis-ci.org/Liuchang0812/yugong.svg?branch=master
@@ -17,7 +17,8 @@ use pip or easy_install ::
 HOW TO USE
 ---------------
 
-::
+as following ::
+
     migrate_tool -h
     migrate_tool -c /path/to/your/conf
 
@@ -39,3 +40,5 @@ TODO
 
 LICENSE
 ----------
+
+MIT
