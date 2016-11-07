@@ -42,6 +42,7 @@ class UrlListService(storage_service.StorageService):
                     ret = urlparse.urlparse(line)
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
+                    logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': line.strip()})))
                     yield {'store_path': ret.path.strip(), 'url_path': line.strip()}
                 except Exception:
                     logger.warn("{} is invalid".format(line))

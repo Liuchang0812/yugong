@@ -52,9 +52,11 @@ class QiniuStorageService(storage_service.StorageService):
             try:
                 ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
                 for i in ret['item']:
+                    logger.info("yield new object: {}".format(i['key']))
+
                     yield i['key']
 
-                if eof:
+                if not eof:
                     marker = ret['marker']
             except Exception as e:
                 logger.warn("list exception: " + str(e))

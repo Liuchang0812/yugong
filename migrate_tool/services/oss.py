@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-
+from logging import getLogger
 from migrate_tool import storage_service
 import oss2
+logger = getLogger(__name__)
 
 class OssStorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
-        print args
-        print kwargs
+
         endpoint = kwargs['endpoint']
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
@@ -23,6 +23,9 @@ class OssStorageService(storage_service.StorageService):
 
     def list(self):
         for obj in oss2.ObjectIterator(self._oss_api):
+            if obj.key[-1] == '/':
+                continue
+            logger.info("yield new object: {}".format(obj.key))
             yield obj.key
 
     def exists(self, _path):
