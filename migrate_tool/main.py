@@ -10,7 +10,12 @@ from os import path
 
 from migrate_tool.migrator import ThreadMigrator
 
+import signal
 from logging.config import dictConfig
+from threading import Thread
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8') 
 
 log_config = {
     'version': 1,
@@ -67,7 +72,7 @@ def create_parser():
     return parser_
 
 
-def main_():
+def main_thread():
 
     parser = create_parser()
     opt = parser.parse_args()
@@ -98,14 +103,33 @@ def main_():
     migrator.start()
 
     import time
-    while True:
-        state = migrator.status()
+    try:
+        while True:
+            state = migrator.status()
 
-        if state['finish']:
-            break
-        time.sleep(3)
+            if state['finish']:
+                break
+            time.sleep(3)
+
+    except KeyboardInterrupt:
+       state = migrator.status()
+       print state
+       import sys
+       sys.exit()
 
     migrator.stop()
+    state = migrator.status()
+    print state
 
+def main_():
+    thread_ = Thread(target=main_thread)
+    thread_.daemon=True
+    thread_.start()
+    try:
+        while thread_.is_alive():
+            thread_.join(2)
+    except KeyboardInterrupt:
+        print 'exiting'
+    
 if __name__ == '__main__':
     main_()
