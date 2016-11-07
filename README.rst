@@ -1,9 +1,9 @@
 cos_migrate_tool
 #############
 
-.. image:: https://travis-ci.org/Liuchang0812/yugong.svg?branch=master
-    :target: https://travis-ci.org/Liuchang0812/yugong
-
+.. image:: https://travis-ci.org/tencentyun/yugong.svg?branch=master
+    :target: https://travis-ci.org/tencentyun/yugong
+    
 A simple tool for migrating data between object storage services.
 
 INSTALL
