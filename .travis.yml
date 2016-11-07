@@ -6,8 +6,11 @@ install:
 - python setup.py install
 - pip freeze
 - pip install pep8
+
+pre_script:
+- pep8 migrate_tool --max-line-length=140
+
 script:
-- pep8 qcloud_cos --max-line-length=140
 - nosetests
 deploy:
   provider: pypi
