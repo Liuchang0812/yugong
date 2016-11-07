@@ -64,7 +64,7 @@ class QiniuStorageService(storage_service.StorageService):
                 for i in ret['items']:
                     yield i['key']
 
-                if eof and 'marker' in ret:
+                if not eof and 'marker' in ret:
                     marker = ret['marker']
                 else:
                     eof = True
