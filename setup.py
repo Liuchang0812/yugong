@@ -6,20 +6,22 @@ from platform import python_version_tuple
 def requirements():
 
     with open('requirements.txt', 'r') as fileobj:
-        requirements = [line for line in fileobj]
+        requirements = [line.strip() for line in fileobj]
 
         version = python_version_tuple()
 
         if version[0] == 2 and version[1] == 6:
             requirements.append("argparse==1.4.0")
+        return requirements
+print requirements()
 
 def long_description():
     with open('README.rst', 'r') as fileobj:
         return fileobj.read()
 
 setup(
-    name='migrate_tool',
-    version='0.0.1',
+    name='cos_migrate_tool',
+    version='0.0.2',
     packages=['migrate_tool', 'migrate_tool.services'],
     url='https://www.qcloud.com/',
     license='MIT',
@@ -30,7 +32,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'yugong=migrate_tool.main:main_'
+            'migrate_tool=migrate_tool.main:main_'
         ],
         'storage_services': [
             'localfs=migrate_tool.services.LocalFileSystem:LocalFileSystem',
@@ -40,6 +42,5 @@ setup(
             'url=migrate_tool.services.url_list:UrlListService',
         ]
    },
-    install_requires=requirements(),
-
+    install_requires=requirements()
 )
