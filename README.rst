@@ -17,7 +17,12 @@ use pip or easy_install ::
 HOW TO USE
 ---------------
 
-hello wold
+::
+    migrate_tool -h
+    migrate_tool -c /path/to/your/conf
+
+
+
 
 ISSUE
 ---------------
@@ -27,6 +32,10 @@ send emails to liuchang0812#gmail.com or post an issue
 TODO
 ---------------
 
-1. one
-2. two
-3. three
+1. add overwrite option
+2. add retry option
+3. add more logging
+
+
+LICENSE
+----------
