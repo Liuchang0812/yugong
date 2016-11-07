@@ -1,6 +1,9 @@
 yugong
 #############
 
+.. image:: https://travis-ci.org/Liuchang0812/yugong.svg?branch=master
+    :target: https://travis-ci.org/Liuchang0812/yugong
+
 A simple tool for migrating data between object storage services.
 
 INSTALL
