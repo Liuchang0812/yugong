@@ -62,6 +62,7 @@ class QiniuStorageService(storage_service.StorageService):
             try:
                 ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
                 for i in ret['items']:
+                    logger.info("yield new object: {}".format(i['key']))
                     yield i['key']
 
                 if not eof and 'marker' in ret:

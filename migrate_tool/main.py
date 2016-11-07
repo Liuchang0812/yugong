@@ -119,7 +119,7 @@ def main_thread():
 
     migrator.stop()
     state = migrator.status()
-    print state
+    print 'summay:\n ', 'failed: ', state['fail'], ' success: ', state['success']
 
 def main_():
     thread_ = Thread(target=main_thread)

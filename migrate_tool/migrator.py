@@ -88,8 +88,7 @@ class ThreadMigrator(BaseMigrator):
 
             else:
                 # not migrated
-                self._worker.add_task(object_name_)
-                print type(object_name_), object_name_
+                self._worker.add_task(object_name)
                 logger.info("{} has been submitted, waiting for migrating".format(object_name_))
         else:
             self._finish = True
