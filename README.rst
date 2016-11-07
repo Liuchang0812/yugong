@@ -8,7 +8,7 @@ INSTALL
 
 use pip or easy_install ::
 
-    pip install yugong
+    pip install migrate_tool
 
 
 HOW TO USE
