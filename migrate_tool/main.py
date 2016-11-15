@@ -53,6 +53,11 @@ log_config = {
             'level': 'WARN',
             'propagate': False
         },
+        'requests.packages': {
+            'handlers': ['default'],
+            'level': 'WARN',
+            'propagate': True
+        }
     }
 }
 

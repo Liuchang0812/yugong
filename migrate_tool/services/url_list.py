@@ -29,7 +29,7 @@ class UrlListService(storage_service.StorageService):
                     fd.write(chunk)
 
         else:
-            print "task: ", task
+            # print "task: ", task
             raise ValueError("task is invalid, task should be a dict and contains url_path")
 
 

@@ -110,7 +110,7 @@ class Worker(object):
 
     def term(self):
         self._stop = True
-        logger.info("set stop to True")
+        logger.info("try to stop migrate process.")
         # while any([t.is_alive() for t in self._threads_pool]):
         #     map(lambda i: i.join(5), filter(lambda j: j.is_alive(), self._threads_pool))
         #     print filter(lambda j: j.is_alive(), self._threads_pool)

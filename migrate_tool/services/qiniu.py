@@ -33,9 +33,9 @@ class QiniuStorageService(storage_service.StorageService):
             cos_path = quote(cos_path)
 
         base_url = 'http://%s/%s' % (self._domain, cos_path)
-        print base_url
+        # print base_url
         private_url = self._auth.private_download_url(base_url, expires=3600)
-        print private_url
+        # print private_url
         logger.debug("private url: " + private_url)
 
         ret = requests.get(private_url)

@@ -62,7 +62,8 @@ class ThreadMigrator(BaseMigrator):
 
     def log_status_thread(self):
         while not self._stop:
-            logger.info("yugong is working, {} tasks successfully, {} tasks failed.".format(self._worker.success_num, self._worker.failure_num))
+            logger.info("working, {} tasks successfully, {} tasks failed.".format(self._worker.success_num,
+                                                                                  self._worker.failure_num))
             time.sleep(3)
 
     def work_thread(self):
@@ -79,7 +80,7 @@ class ThreadMigrator(BaseMigrator):
                 object_name_ = object_name
 
             if isinstance(object_name_, unicode):
-                logger.info("object_name is unicode: " + repr(object_name_))
+                # logger.info("object_name is unicode: " + repr(object_name_))
                 object_name_ = object_name_.encode('utf-8')
 
             if self._filter.query(object_name_):
