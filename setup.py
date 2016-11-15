@@ -13,7 +13,6 @@ def requirements():
         if version[0] == 2 and version[1] == 6:
             requirements.append("argparse==1.4.0")
         return requirements
-print requirements()
 
 def long_description():
     with open('README.rst', 'r') as fileobj:
@@ -21,7 +20,7 @@ def long_description():
 
 setup(
     name='cos_migrate_tool',
-    version='0.0.2',
+    version='0.0.3',
     packages=['migrate_tool', 'migrate_tool.services'],
     url='https://www.qcloud.com/',
     license='MIT',
