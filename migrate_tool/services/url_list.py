@@ -32,7 +32,6 @@ class UrlListService(storage_service.StorageService):
             # print "task: ", task
             raise ValueError("task is invalid, task should be a dict and contains url_path")
 
-
     def upload(self, task, local_path):
         raise NotImplementedError
 

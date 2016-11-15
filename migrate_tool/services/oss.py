@@ -5,6 +5,7 @@ from migrate_tool import storage_service
 import oss2
 logger = getLogger(__name__)
 
+
 class OssStorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):

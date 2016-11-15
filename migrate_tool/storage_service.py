@@ -2,6 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 
+
 class StorageService(object):
     """ The abstract class for Storage Services. you must impl following functions.
 

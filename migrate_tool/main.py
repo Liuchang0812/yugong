@@ -15,7 +15,7 @@ from logging.config import dictConfig
 from threading import Thread
 import sys
 reload(sys)
-sys.setdefaultencoding('utf8') 
+sys.setdefaultencoding('utf8')
 
 log_config = {
     'version': 1,
@@ -84,7 +84,7 @@ def main_thread():
     conf = SafeConfigParser()
     conf.readfp(opt.conf)
 
-    output_service_conf  = dict(conf.items('source'))
+    output_service_conf = dict(conf.items('source'))
     input_service_conf = dict(conf.items('destination'))
     if conf.has_option('common', 'threads'):
         _threads = conf.getint('common', 'threads')
@@ -103,8 +103,10 @@ def main_thread():
     output_service = services_[output_service_conf['type']](**output_service_conf)
     input_service = services_[input_service_conf['type']](**input_service_conf)
 
-
-    migrator = ThreadMigrator(input_service=input_service, output_service=output_service, work_dir=conf.get('common', 'workspace'), threads=_threads)
+    migrator = ThreadMigrator(input_service=input_service,
+                              output_service=output_service,
+                              work_dir=conf.get('common', 'workspace'),
+                              threads=_threads)
     migrator.start()
 
     import time
@@ -117,18 +119,19 @@ def main_thread():
             time.sleep(3)
 
     except KeyboardInterrupt:
-       state = migrator.status()
-       print state
-       import sys
-       sys.exit()
+        state = migrator.status()
+        print state
+        import sys
+        sys.exit()
 
     migrator.stop()
     state = migrator.status()
     print 'summay:\n ', 'failed: ', state['fail'], ' success: ', state['success']
 
+
 def main_():
     thread_ = Thread(target=main_thread)
-    thread_.daemon=True
+    thread_.daemon = True
     thread_.start()
     try:
         while thread_.is_alive():

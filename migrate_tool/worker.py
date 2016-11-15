@@ -44,7 +44,7 @@ class Worker(object):
                 task_path = task['store_path']
             else:
                 task_path = task
-        
+
             if task_path.startswith('/'):
                 task_path = task_path[1:]
 
@@ -104,7 +104,7 @@ class Worker(object):
             t.start()
 
     def stop(self):
-        
+
         self._queue.join()
         self.term()
 
@@ -117,8 +117,6 @@ class Worker(object):
 
         map(lambda i: i.join(), self._threads_pool)
 
-
-        
     @property
     def success_num(self):
         return self._succ

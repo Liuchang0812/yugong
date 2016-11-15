@@ -23,7 +23,6 @@ class CosV4StorageService(storage_service.StorageService):
         self._cos_api = CosClient(appid, accesskeyid, accesskeysecret, region=region)
         self._bucket = bucket
 
-
     def download(self, cos_path, local_path):
         raise NotImplementedError
 
@@ -33,7 +32,6 @@ class CosV4StorageService(storage_service.StorageService):
 
         if self._prefix_dir:
             cos_path = self._prefix_dir + cos_path
-
 
         if isinstance(local_path, unicode):
             local_path.encode('utf-8')

@@ -6,6 +6,7 @@ from os import path
 
 from migrate_tool import storage_service
 
+
 class LocalFileSystem(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
@@ -27,12 +28,13 @@ class LocalFileSystem(storage_service.StorageService):
             os.makedirs(path.dirname(src_path))
         except OSError:
             pass
-            
+
         import shutil
         return shutil.move(localpath, src_path)
 
     def list(self):
         return os.listdir(self._workspace)
+
 
 def make():
     """ hook function for entrypoints

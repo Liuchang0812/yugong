@@ -49,7 +49,11 @@ class ThreadMigrator(BaseMigrator):
         self._work_dir = work_dir or os.getcwd()
         self._filter = Filter(self._work_dir)
 
-        self._worker = Worker(work_dir=self._work_dir, file_filter=self._filter, input_service=self._input_service, output_service=self._output_service, threads_num=threads)
+        self._worker = Worker(work_dir=self._work_dir,
+                              file_filter=self._filter,
+                              input_service=self._input_service,
+                              output_service=self._output_service,
+                              threads_num=threads)
 
         self._stop = False
         self._finish = False
@@ -124,7 +128,9 @@ class ThreadMigrator(BaseMigrator):
 
 if __name__ == '__main__':
     from migrate_tool.services.LocalFileSystem import LocalFileSystem
-    migrator = ThreadMigrator(input_service=LocalFileSystem(workspace='F:\\Workspace\\tmp'), output_service=LocalFileSystem(workspace='F:\\logstash-conf'))
+
+    migrator = ThreadMigrator(input_service=LocalFileSystem(workspace='F:\\Workspace\\tmp'),
+                              output_service=LocalFileSystem(workspace='F:\\logstash-conf'))
     migrator.start()
 
     import time
