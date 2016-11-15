@@ -19,7 +19,7 @@ class LocalFileSystem(storage_service.StorageService):
     def download(self, path_, localpath):
         src_path = path.join(self._workspace, path_)
         import shutil
-        return shutil.move(src_path, localpath)
+        return shutil.copyfile(src_path, localpath)
 
     def upload(self, path_, localpath):
         src_path = path.join(self._workspace, path_)
@@ -30,7 +30,7 @@ class LocalFileSystem(storage_service.StorageService):
             pass
 
         import shutil
-        return shutil.move(localpath, src_path)
+        return shutil.copyfile(localpath, src_path)
 
     def list(self):
         return os.listdir(self._workspace)
