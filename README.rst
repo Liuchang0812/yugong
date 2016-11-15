@@ -1,5 +1,5 @@
 cos_migrate_tool
-#############
+##########################
 
 .. image:: https://travis-ci.org/tencentyun/cos_migrate_tool.svg?branch=master
     :target: https://travis-ci.org/tencentyun/cos_migrate_tool
@@ -11,7 +11,7 @@ INSTALL
 
 use pip or easy_install ::
 
-    pip install migrate_tool
+    pip install -U cos_migrate_tool
 
 
 HOW TO USE
@@ -19,8 +19,8 @@ HOW TO USE
 
 as following ::
 
-    migrate_tool -h
-    migrate_tool -c /path/to/your/conf
+    cos_migrate_tool -h
+    cos_migrate_tool -c /path/to/your/conf
 
 
 
