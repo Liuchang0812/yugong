@@ -1,13 +1,13 @@
 # 迁移工具使用方法
 
-迁移工具支持将OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，需要安装Python2.7。
+迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，需要安装Python2.7。
 
 ## 安装方法
 
 推荐使用pip或者easy_install安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)。
 
 ```bash
-    pip install cos_migrate_tool
+    pip install -U cos_migrate_tool
 ```
 
 ## 使用方法
@@ -28,7 +28,8 @@
 
 ```bash
 [common]
-workspace=/tmp/tmp6
+workspace=/tmp/tmp6   # 工作目录
+threads=20            # 工作线程数，如果不配置，则为10线程
 
 [source]
 type=oss
@@ -66,6 +67,7 @@ accesskeyid=               # cos 的 accesskeyid
 appid=                     # cos 的 appid
 accesskeysecret=           # cos 的 accesskeysecret
 bucket=sdktest             # cos 的 bucket
+prefix_dir=/dir21          # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
 ```
 
 ###  迁移qiniu
@@ -73,13 +75,14 @@ bucket=sdktest             # cos 的 bucket
 ```bash
 [common]
 workspace=/tmp/tmp11
+       
 
 [source]
 type=qiniu
-accesskeyid=            # qiniu 的 accesskeyid
-accesskeysecret=        # qiniu 的 accesskeysecret
-bucket=                 # 要迁移的qiniu的bucket
-domain_url=             # qiniu 的下载域名
+accesskeyid=               # qiniu 的 accesskeyid
+accesskeysecret=           # qiniu 的 accesskeysecret
+bucket=                    # 要迁移的qiniu的bucket
+domain_url=                # qiniu 的下载域名
 
 [destination]
 type=cosv4
@@ -88,6 +91,30 @@ accesskeyid=               # cos 的 accesskeyid
 appid=                     # cos 的 appid
 accesskeysecret=           # cos 的 accesskeysecret
 bucket=sdktest             # cos 的 bucket
+prefix_dir=/dir21          # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
+```
+
+### 迁移S3
+
+```bash
+[common]
+workspace=/tmp/tmp21
+
+[source]
+type=s3
+accesskeyid=               # s3 的 accesskey id
+accesskeysecret=           # s3 的 accesskey secret
+bucket=                    # s3 的要迁移的bucket名
+
+[destination]
+type=cosv4
+region=shanghai
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=
+
+
 ```
 
 ### 迁移列表文件
@@ -98,8 +125,8 @@ workspace=
 
 [source]
 type=url
-url_list_file=/tmp/urllist.txt   #要迁移的文件url列表文件，文件每一行为一个完整的url
-timeout=3
+url_list_file=/tmp/urllist.txt   # 要迁移的文件url列表文件，文件每一行为一个完整的url
+timeout=3                        # http请求的超时时间
 
 [destination]
 type=cosv4
