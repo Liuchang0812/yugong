@@ -1,6 +1,3 @@
-cos_migrate_tool
-##########################
-
 .. image:: https://travis-ci.org/tencentyun/cos_migrate_tool.svg?branch=master
     :target: https://travis-ci.org/tencentyun/cos_migrate_tool
     
@@ -13,6 +10,10 @@ cos_migrate_tool
 .. image:: https://img.shields.io/pypi/dm/cos_migrate_tool.svg   
     :target: https://pypi.python.org/pypi/cos_migrate_tool
     
+    
+cos_migrate_tool
+##########################
+
 A simple tool for migrating data between object storage services.
 
 INSTALL
