@@ -32,7 +32,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'migrate_tool=migrate_tool.main:main_'
+            'cos_migrate_tool=migrate_tool.main:main_'
         ],
         'storage_services': [
             'localfs=migrate_tool.services.LocalFileSystem:LocalFileSystem',
