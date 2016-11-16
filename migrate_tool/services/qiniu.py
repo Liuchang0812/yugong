@@ -10,6 +10,10 @@ import requests
 logger = getLogger(__name__)
 
 
+class TokenException(Exception):
+    pass
+
+
 class QiniuStorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
@@ -61,6 +65,17 @@ class QiniuStorageService(storage_service.StorageService):
         while not eof:
             try:
                 ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
+
+                if eof:
+                    continue
+
+                if ret is None:
+                    if info.error == 'bad token':
+                        raise TokenException
+                    else:
+                        logger.warn(info.text_body)
+                        raise IOError(info.error)
+
                 for i in ret['items']:
                     logger.info("yield new object: {}".format(i['key']))
                     yield i['key']
@@ -69,6 +84,9 @@ class QiniuStorageService(storage_service.StorageService):
                     marker = ret['marker']
                 else:
                     eof = True
+            except TokenException as e:
+                eof = True
+                logger.warn("Your accessid/accesskey is incorrect, Please double check your configures")
             except Exception as e:
                 logger.exception("list exception: " + str(e))
 
