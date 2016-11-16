@@ -46,7 +46,7 @@ class QiniuStorageService(storage_service.StorageService):
 
         if ret.status_code != 200:
             raise SystemError("download file from qiniu failed")
-        print local_path.encode('utf-8')
+        # print local_path.encode('utf-8')
         with open(local_path.encode('utf-8'), 'wb') as fd:
             for chunk in ret.iter_content(1024):
                 fd.write(chunk)
@@ -65,11 +65,9 @@ class QiniuStorageService(storage_service.StorageService):
         while not eof:
             try:
                 ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
-
-                if eof:
-                    continue
-
+                
                 if ret is None:
+                    logger.warn("ret is None")
                     if info.error == 'bad token':
                         raise TokenException
                     else:
@@ -79,6 +77,11 @@ class QiniuStorageService(storage_service.StorageService):
                 for i in ret['items']:
                     logger.info("yield new object: {}".format(i['key']))
                     yield i['key']
+
+                if eof is True:
+                    logger.info("eof is {}".format(eof))
+                    continue
+
 
                 if not eof and 'marker' in ret:
                     marker = ret['marker']
