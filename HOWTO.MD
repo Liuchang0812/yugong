@@ -4,7 +4,7 @@
 
 ## 安装方法
 
-推荐使用pip或者easy_install安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)。
+推荐使用pip安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)或者使用apt/yum等包管理工具安装python-pip包。
 
 ```bash
     pip install -U cos_migrate_tool
