@@ -19,7 +19,7 @@ A simple tool for migrating data between object storage services.
 INSTALL
 -----------
 
-use pip or easy_install ::
+use pip ::
 
     pip install -U cos_migrate_tool
 
@@ -31,8 +31,6 @@ as following ::
 
     cos_migrate_tool -h
     cos_migrate_tool -c /path/to/your/conf
-
-
 
 
 ISSUE
