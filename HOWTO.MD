@@ -2,13 +2,25 @@
 
 迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，系统自带的Python版本在2.6以上。
 
+## 系统依赖
+工具运行平台为\*nix，需要有Python2.6及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
+
+在centos上，使用如下命令安装：
+```bash
+sudo yum install python-pip python-devel gcc
+```
+
+在ubuntu/debian上，使用如下命令安装：
+```bash
+sudo apt-get install python-pip python-dev gcc
+```
+
 ## 安装方法
 
 推荐使用pip安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)或者使用apt/yum等包管理工具安装python-pip包。
 
 ```bash
  pip install -U cos_migrate_tool
-    
 ```
 执行完上述命令后，可以尝试使用如下命令检测是否安装成功。
 ```bash
