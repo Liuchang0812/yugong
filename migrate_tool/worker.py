@@ -97,7 +97,7 @@ class Worker(object):
                 self._filter.add(task_path)
             except Exception:
                 logger.exception("try except for deleting file")
-                
+
             finally:
                     import os
                     if isinstance(localpath, unicode):
