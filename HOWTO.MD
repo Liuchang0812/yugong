@@ -1,13 +1,37 @@
 # 迁移工具使用方法
 
-迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，需要安装Python2.7。
+迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，系统自带的Python版本在2.6以上。
+
+## 系统依赖
+工具运行平台为\*nix，需要有Python2.6及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
+
+在centos上，使用如下命令安装：
+```bash
+sudo yum install python-pip python-devel gcc
+```
+
+在ubuntu/debian上，使用如下命令安装：
+```bash
+sudo apt-get install python-pip python-dev gcc
+```
 
 ## 安装方法
 
-推荐使用pip或者easy_install安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)。
+推荐使用pip安装，安装pip的方法，可以参考[官网](https://pip.pypa.io/en/latest/installing/)或者使用apt/yum等包管理工具安装python-pip包。
 
 ```bash
-    pip install -U cos_migrate_tool
+ pip install -U cos_migrate_tool
+```
+执行完上述命令后，可以尝试使用如下命令检测是否安装成功。
+```bash
+cos_migrate_tool -h
+```
+
+## 卸载方法
+
+执行如下命令：
+```
+pip uninstall cos_migrate_tool
 ```
 
 ## 使用方法
@@ -18,13 +42,15 @@
     cos_migrate_tool -c /path/to/your/conf
 ```
 
-在配置文件中，需要配置一个工作目录，之后迁移过程中产生的临时文件都在放置在该目录，请保证目录空间足够大，如果并行执行多个迁移任务，推荐使用不同的目录。
+配置文件自行编写，模版参考下章内容。在配置文件中，需要配置一个工作目录，之后迁移过程中产生的临时文件都在放置在该目录，请保证目录空间足够大，如果并行执行多个迁移任务，推荐使用不同的目录。
 
 在迁移过程中，你可以查看你设定的工作目录下面的 fail_file.txt 来查看迁移失败的文件列表。
 
 ## 配置文件
 
 配置文件模板, common 部分配置基本配置,workspace是上述的工作目录。source 部分配置数据源的信息，如果你想迁移oss到cos，该部分就是配置oss的属性。destination 部分配置cos属性。
+
+!! 配置文件请删除注释文字，即 `# 注释` 部分，空白模板参考 [链接](https://github.com/tencentyun/cos_migrate_tool/tree/master/conf)
 
 ```bash
 [common]
@@ -136,3 +162,8 @@ appid=
 accesskeysecret=
 bucket=
 ```
+
+### 常见错误与解决办法
+
+1. pip 命令不存在。 使用 apt install python-pip 或者 yum install python-pip 命令安装PIP。
+2. 使用pip安装迁移工具不成功。尝试执行 sudo pip install cos_migrate_tool。
