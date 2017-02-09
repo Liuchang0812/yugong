@@ -32,16 +32,17 @@ class CosV4StorageService(storage_service.StorageService):
         raise NotImplementedError
 
     def upload(self, cos_path, local_path):
+	
         if not cos_path.startswith('/'):
             cos_path = '/' + cos_path
 
         if self._prefix_dir:
             cos_path = self._prefix_dir + cos_path
 
-        if isinstance(local_path, unicode):
-            local_path.encode('utf-8')
+        # if isinstance(local_path, unicode):
+        #    local_path.encode('utf-8')
         insert_only = 0 if self._overwrite else 1
-        upload_request = UploadFileRequest(self._bucket, unicode(cos_path), local_path, insert_only=insert_only)
+        upload_request = UploadFileRequest(self._bucket, unicode(cos_path), unicode(local_path), insert_only=insert_only)
         upload_file_ret = self._cos_api.upload_file(upload_request)
 
         if upload_file_ret[u'code'] != 0:

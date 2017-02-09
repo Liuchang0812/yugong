@@ -89,11 +89,13 @@ class ThreadMigrator(BaseMigrator):
 
                 if self._filter.query(object_name_):
                     # object had been migrated
+                    import urllib
                     logger.info("{} has been migrated, skip it".format(object_name_))
 
                 else:
                     # not migrated
                     self._worker.add_task(object_name)
+                    import urllib
                     logger.info("{} has been submitted, waiting for migrating".format(object_name_))
             else:
                 self._finish = True

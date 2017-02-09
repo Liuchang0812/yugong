@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from logging import getLogger
+import urllib
 from migrate_tool import storage_service
 import oss2
 logger = getLogger(__name__)
@@ -20,6 +21,8 @@ class OssStorageService(storage_service.StorageService):
             self._prefix = self._prefix[1:]
 
     def download(self, cos_path, local_path):
+	
+        # self._oss_api.get_object_to_file(urllib.unquote(cos_path).encode('utf-8'), local_path)
         self._oss_api.get_object_to_file(cos_path, local_path)
 
     def upload(self, cos_path, local_path):
@@ -29,8 +32,10 @@ class OssStorageService(storage_service.StorageService):
         for obj in oss2.ObjectIterator(self._oss_api, prefix=self._prefix):
             if obj.key[-1] == '/':
                 continue
-            logger.info("yield new object: {}".format(obj.key))
-            yield obj.key.decode('utf-8')
+            # logger.info("yield new object: {}".format(urllib.quote(obj.key)))
+            # yield urllib.quote(obj.key)
+            yield obj.key
+	
 
     def exists(self, _path):
         raise NotImplementedError

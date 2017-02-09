@@ -15,7 +15,7 @@ from logging.config import dictConfig
 from threading import Thread
 import sys
 reload(sys)
-sys.setdefaultencoding('utf8')
+sys.setdefaultencoding('utf-8')
 
 log_config = {
     'version': 1,

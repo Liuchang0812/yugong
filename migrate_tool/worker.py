@@ -3,6 +3,7 @@ from Queue import Queue, Empty
 from threading import Thread
 from os import path, makedirs
 from logging import getLogger
+import urllib
 
 logger = getLogger(__name__)
 fail_logger = getLogger('migrate_tool.fail_file')
@@ -51,7 +52,8 @@ class Worker(object):
             if isinstance(task_path, str):
                 task_path = task_path.decode('utf-8')
 
-            localpath = path.join(self._work_dir, task_path)
+            import uuid
+            localpath = path.join(self._work_dir, uuid.uuid1().hex)
             try:
 
                 try:
@@ -102,7 +104,7 @@ class Worker(object):
                 if isinstance(task_path, unicode):
                     logger.info("inc succ with {}".format(task_path.encode('utf-8')))
                 else:
-                    logger.info("inc succ with {}".format(task_path.encode('utf-8')))
+                    logger.info("inc succ with {}".format(task_path))
 
                 self._succ += 1
                 self._filter.add(task_path)
