@@ -66,6 +66,7 @@ class Worker(object):
                         logger.info("{file_path} exists".format(file_path=task_path))
                         self._succ += 1
                         self._filter.add(task_path)
+                        continue
                 except Exception as e:
                     logger.exception("exists failed")
 

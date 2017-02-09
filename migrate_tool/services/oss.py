@@ -30,7 +30,7 @@ class OssStorageService(storage_service.StorageService):
             if obj.key[-1] == '/':
                 continue
             logger.info("yield new object: {}".format(obj.key))
-            yield obj.key
+            yield obj.key.decode('utf-8')
 
     def exists(self, _path):
         raise NotImplementedError

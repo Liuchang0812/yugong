@@ -51,19 +51,25 @@ class CosV4StorageService(storage_service.StorageService):
         raise NotImplementedError
 
     def exists(self, _path):
+        if not _path.startswith('/'):
+            _path = '/' + _path
+
         logger.info("exists: " + str(_path))
+        if self._prefix_dir:
+            _path = self._prefix_dir + _path
+
         request = StatFileRequest(self._bucket, _path)
         ret = self._cos_api.stat_file(request)
         logger.info("ret: " + str(ret))
-        import json
-        v = json.loads(ret)
-        if v['code'] != 0:
-            logger.warn("error code: " + v['error_code'])
+        # import json
+        # v = json.loads(ret)
+        if ret['code'] != 0:
+            logger.warn("error code: " + str(ret['code']))
             return False
-        if v['data']['filelen'] != v['data']['filesize']:
+        if ret['data']['filelen'] != ret['data']['filesize']:
             logger.warn("file is broken, filelen: {len}, filesize: {size}".format(
-                len=v['data']['filelen'],
-                size=v['data']['filesize']
+                len=ret['data']['filelen'],
+                size=ret['data']['filesize']
             ))
             return False
         return True
