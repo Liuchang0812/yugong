@@ -59,8 +59,18 @@ class Worker(object):
                 except OSError as e:
                     # directory is exists
                     logger.debug(str(e))
+                # 判断文件是否已经存在
                 try:
-                    self._output_service.download(task, localpath)
+                    ret = self._input_service.exists(task_path)
+                    if ret:
+                        logger.info("{file_path} exists".format(file_path=task_path))
+                        self._succ += 1
+                        self._filter.add(task_path)
+                except Exception as e:
+                    logger.exception("exists failed")
+
+                try:
+                    self._output_service.download(task_path, localpath)
                 except Exception as e:
                     logger.exception("download failed")
                     self._fail += 1

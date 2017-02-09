@@ -3,7 +3,11 @@
 
 from migrate_tool import storage_service
 from qcloud_cos import CosClient
-from qcloud_cos import UploadFileRequest
+from qcloud_cos import UploadFileRequest, StatFileRequest
+
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class CosV4StorageService(storage_service.StorageService):
@@ -47,4 +51,19 @@ class CosV4StorageService(storage_service.StorageService):
         raise NotImplementedError
 
     def exists(self, _path):
-        raise NotImplementedError
+        logger.info("exists: " + str(_path))
+        request = StatFileRequest(self._bucket, _path)
+        ret = self._cos_api.stat_file(request)
+        logger.info("ret: " + str(ret))
+        import json
+        v = json.loads(ret)
+        if v['code'] != 0:
+            logger.warn("error code: " + v['error_code'])
+            return False
+        if v['data']['filelen'] != v['data']['filesize']:
+            logger.warn("file is broken, filelen: {len}, filesize: {size}".format(
+                len=v['data']['filelen'],
+                size=v['data']['filesize']
+            ))
+            return False
+        return True
