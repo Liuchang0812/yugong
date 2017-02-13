@@ -51,7 +51,11 @@ class Worker(object):
             if isinstance(task_path, str):
                 task_path = task_path.decode('utf-8')
 
-            localpath = path.join(self._work_dir, task_path)
+            # localpath = path.join(self._work_dir, task_path)
+
+            import uuid
+            localpath = path.join(self._work_dir, uuid.UUID.hex)
+
             try:
 
                 try:
