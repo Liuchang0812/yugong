@@ -54,7 +54,7 @@ class Worker(object):
             # localpath = path.join(self._work_dir, task_path)
 
             import uuid
-            localpath = path.join(self._work_dir, uuid.UUID.hex)
+            localpath = unicode(path.join(self._work_dir, uuid.uuid1().hex))
 
             try:
 
