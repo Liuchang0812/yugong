@@ -15,6 +15,9 @@ class S3StorageService(storage_service.StorageService):
         bucket = kwargs['bucket']
         _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
         self._bucket_api = _s3_api.get_bucket(bucket)
+        self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
+        if self._prefix.startswith('/'):
+            self._prefix = self._prefix[1:]
 
     def download(self, cos_path, local_path):
         key = self._bucket_api.get_key(cos_path)
@@ -25,7 +28,7 @@ class S3StorageService(storage_service.StorageService):
         raise NotImplementedError
 
     def list(self):
-        for obj in self._bucket_api.list():
+        for obj in self._bucket_api.list(prefix=self._prefix):
             if obj.name[-1] == '/':
                 continue
             logger.info("yield new object: {}".format(obj.key))
