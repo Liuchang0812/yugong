@@ -28,6 +28,9 @@ class S3StorageService(storage_service.StorageService):
                 key.get_contents_to_filename(local_path)
             else:
                 raise IOError("Download failed 404")
+            if task['size'] is None:
+                logger.info("task's size is None, skip check file size on local")
+                break
 
             from os import path
             if path.getsize(local_path) != int(task['size']):

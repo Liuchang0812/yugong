@@ -32,6 +32,10 @@ class OssStorageService(storage_service.StorageService):
                 pass
 
             self._oss_api.get_object_to_file(task['store_path'], local_path)
+            if task['size'] is None:
+                logger.info("task's size is None, skip check file size on local")
+                break
+
             from os import path
             if path.getsize(local_path) != int(task['size']):
                 logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
