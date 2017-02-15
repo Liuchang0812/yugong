@@ -170,3 +170,4 @@ bucket=
 
 1. pip 命令不存在。 使用 apt install python-pip 或者 yum install python-pip 命令安装PIP。
 2. 使用pip安装迁移工具不成功。尝试执行 sudo pip install cos_migrate_tool。
+3. 提示找不到argparse，使用pip安装 sudo pip install argparse
