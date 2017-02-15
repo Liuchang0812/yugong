@@ -3,7 +3,7 @@
 迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，系统自带的Python版本在2.6以上。
 
 ## 系统依赖
-工具运行平台为\*nix，需要有Python2.6及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
+工具运行平台为\*nix，需要有Python2.7及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
 
 在centos上，使用如下命令安装：
 ```bash
@@ -118,6 +118,7 @@ appid=                     # cos 的 appid
 accesskeysecret=           # cos 的 accesskeysecret
 bucket=sdktest             # cos 的 bucket
 prefix_dir=/dir21          # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
+overwrite=true             # 是否覆盖上传，如果不需要，删除此行
 ```
 
 ### 迁移S3
@@ -130,12 +131,14 @@ workspace=/tmp/tmp21
 type=s3
 accesskeyid=               # s3 的 accesskey id
 accesskeysecret=           # s3 的 accesskey secret
-bucket=                    # s3 的要迁移的bucket名
+bucket=                    # s3 的要迁移的bucket名
+prefix=                    # s3 的要迁移的目录，如果要迁移整个目录，删除此行
 
 [destination]
 type=cosv4
 region=shanghai
 accesskeyid=
+
 appid=
 accesskeysecret=
 bucket=
