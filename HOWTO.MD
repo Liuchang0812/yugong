@@ -109,6 +109,8 @@ accesskeyid=               # qiniu 的 accesskeyid
 accesskeysecret=           # qiniu 的 accesskeysecret
 bucket=                    # 要迁移的qiniu的bucket
 domain_url=                # qiniu 的下载域名
+prefix=dir1                # 要迁移的目录，如果要迁移整个bucket，删除此行
+
 
 [destination]
 type=cosv4
@@ -132,7 +134,7 @@ type=s3
 accesskeyid=               # s3 的 accesskey id
 accesskeysecret=           # s3 的 accesskey secret
 bucket=                    # s3 的要迁移的bucket名
-prefix=                    # s3 的要迁移的目录，如果要迁移整个目录，删除此行
+prefix=dir1                # s3 的要迁移的目录，如果要迁移整个bucket，删除此行
 
 [destination]
 type=cosv4
