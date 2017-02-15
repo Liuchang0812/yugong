@@ -40,10 +40,7 @@ class Worker(object):
                     time.sleep(1)
                     continue
 
-            if isinstance(task, dict):
-                task_path = task['store_path']
-            else:
-                task_path = task
+            task_path = task['key']
 
             if task_path.startswith('/'):
                 task_path = task_path[1:]
@@ -51,18 +48,26 @@ class Worker(object):
             if isinstance(task_path, str):
                 task_path = task_path.decode('utf-8')
 
-            # localpath = path.join(self._work_dir, task_path)
-
             import uuid
             localpath = unicode(path.join(self._work_dir, uuid.uuid1().hex))
 
             try:
-
                 try:
                     makedirs(path.dirname(localpath))
                 except OSError as e:
                     # directory is exists
                     logger.debug(str(e))
+
+                try:
+                    ret = self._input_service.exists(task)
+                    if ret:
+                        logger.info("{file_path} exists".format(file_path=task_path.encode('utf-8')))
+                        self._succ += 1
+                        self._filter.add(task_path)
+                        continue
+                except Exception as e:
+                    logger.exception("exists failed")
+
                 try:
                     self._output_service.download(task, localpath)
                 except Exception as e:
@@ -72,8 +77,8 @@ class Worker(object):
                     continue
 
                 try:
-                    self._input_service.upload(task_path, localpath)
-                except Exception as e:
+                    self._input_service.upload(task, localpath)
+                except Exception:
                     logger.exception("upload {} failed".format(task_path.encode('utf-8')))
                     self._fail += 1
                     fail_logger.error(task_path)

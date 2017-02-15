@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, with_statement
 import os
 from os import path
-
+from migrate_tool.task import Task
 from migrate_tool import storage_service
 
 
@@ -16,12 +16,14 @@ class LocalFileSystem(storage_service.StorageService):
         rt = path.join(self._workspace, path_)
         return path.exists(rt)
 
-    def download(self, path_, localpath):
+    def download(self, task, localpath):
+        path_ = task['key']
         src_path = path.join(self._workspace, path_)
         import shutil
         return shutil.copyfile(src_path, localpath)
 
-    def upload(self, path_, localpath):
+    def upload(self, task, localpath):
+        path_ = task['key']
         src_path = path.join(self._workspace, path_)
         try:
             import os
@@ -33,7 +35,9 @@ class LocalFileSystem(storage_service.StorageService):
         return shutil.copyfile(localpath, src_path)
 
     def list(self):
-        return os.listdir(self._workspace)
+        for file in os.listdir(self._workspace):
+            from os import path
+            yield Task(file, path.getsize(file), None)
 
 
 def make():
