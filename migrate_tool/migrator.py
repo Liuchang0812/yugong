@@ -73,18 +73,14 @@ class ThreadMigrator(BaseMigrator):
     def work_thread(self):
         assert self._output_service is not None
         try:
-            for object_name in self._output_service.list():
+            for task in self._output_service.list():
 
                 if self._stop:
                     break
 
-                if isinstance(object_name, dict):
-                    object_name_ = object_name['store_path']
-                else:
-                    object_name_ = object_name
-
+                print type(task)
+                object_name_ = task.key
                 if isinstance(object_name_, unicode):
-                    # logger.info("object_name is unicode: " + repr(object_name_))
                     object_name_ = object_name_.encode('utf-8')
 
                 if self._filter.query(object_name_):
@@ -93,7 +89,7 @@ class ThreadMigrator(BaseMigrator):
 
                 else:
                     # not migrated
-                    self._worker.add_task(object_name)
+                    self._worker.add_task(task)
                     logger.info("{} has been submitted, waiting for migrating".format(object_name_))
             else:
                 self._finish = True

@@ -22,20 +22,20 @@ class S3StorageService(storage_service.StorageService):
 
     def download(self, task, local_path):
         for i in range(20):
-            key = self._bucket_api.get_key(task['key'])
+            key = self._bucket_api.get_key(task.key)
 
             if key is not None:
                 key.get_contents_to_filename(local_path)
             else:
                 raise IOError("Download failed 404")
-            if task['size'] is None:
+            if task.size is None:
                 logger.info("task's size is None, skip check file size on local")
                 break
 
             from os import path
-            if path.getsize(local_path) != int(task['size']):
+            if path.getsize(local_path) != int(task.size):
                 logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
-                                                                                      size2=task['size']))
+                                                                                      size2=task.size))
             else:
                 logger.info("Download Successfully, break")
                 break

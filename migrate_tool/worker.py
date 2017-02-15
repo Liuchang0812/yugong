@@ -40,7 +40,7 @@ class Worker(object):
                     time.sleep(1)
                     continue
 
-            task_path = task['key']
+            task_path = task.key
 
             if task_path.startswith('/'):
                 task_path = task_path[1:]

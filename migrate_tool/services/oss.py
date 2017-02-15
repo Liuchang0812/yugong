@@ -27,19 +27,19 @@ class OssStorageService(storage_service.StorageService):
             logger.info("download file with rety {0}".format(i))
             import os
             try:
-                os.remove(task['key'])
+                os.remove(task.key)
             except:
                 pass
 
-            self._oss_api.get_object_to_file(task['store_path'], local_path)
-            if task['size'] is None:
+            self._oss_api.get_object_to_file(task.key, local_path)
+            if task.size is None:
                 logger.info("task's size is None, skip check file size on local")
                 break
 
             from os import path
-            if path.getsize(local_path) != int(task['size']):
+            if path.getsize(local_path) != int(task.size):
                 logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
-                                                                                      size2=task['size']))
+                                                                                      size2=task.size))
             else:
                 logger.info("Download Successfully, break")
                 break

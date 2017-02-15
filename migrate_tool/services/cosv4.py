@@ -28,7 +28,8 @@ class CosV4StorageService(storage_service.StorageService):
     def download(self, cos_path, local_path):
         raise NotImplementedError
 
-    def upload(self, cos_path, local_path):
+    def upload(self, task, local_path):
+        cos_path = task.key
         if not cos_path.startswith('/'):
             cos_path = '/' + cos_path
 
@@ -56,8 +57,8 @@ class CosV4StorageService(storage_service.StorageService):
         raise NotImplementedError
 
     def exists(self, task):
-        _path = task['key']
-        _size = task['size']
+        _path = task.key
+        _size = task.size
 
         if not _path.startswith('/'):
             _path = '/' + _path
