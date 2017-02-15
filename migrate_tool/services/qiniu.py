@@ -28,7 +28,7 @@ class QiniuStorageService(storage_service.StorageService):
         self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
 
     def download(self, task, local_path):
-        cos_path = task.key 
+        cos_path = task.key
         if isinstance(local_path, str):
             local_path = local_path.decode('utf-8')
         if cos_path.startswith('/'):
@@ -63,10 +63,9 @@ class QiniuStorageService(storage_service.StorageService):
                         logger.info("download successful")
                         break
             except:
-               pass
+                pass
         else:
             raise IOError("Download failed error")
-
 
     def upload(self, cos_path, local_path):
         raise NotImplementedError
