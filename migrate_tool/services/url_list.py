@@ -19,17 +19,24 @@ class UrlListService(storage_service.StorageService):
 
     def download(self, task, local_path):
 
-        url_path = task['other']
+        url_path = task.other
 
-        ret = requests.get(url_path, timeout=self._timeout)
-        if ret.status_code == 200:
-            with open(local_path, 'wb') as fd:
-                for chunk in ret.iter_content(self._chunk_size):
-                    fd.write(chunk)
-                fd.flush()
+        for i in range(5):
+            try:
+                ret = requests.get(url_path, timeout=self._timeout)
+                if ret.status_code == 200:
+                    with open(local_path, 'wb') as fd:
+                        for chunk in ret.iter_content(self._chunk_size):
+                            fd.write(chunk)
+                        fd.flush()
+                    break
+                else:
+                    # print "task: ", task
+                    raise IOError("NOTICE: download failed")
+            except:
+                logger.exception("download failed")
         else:
-            # print "task: ", task
-            raise ValueError("task is invalid, task should be a dict and contains url_path")
+            raise IOError("NOTICE: download failed with retry 5")
 
     def upload(self, task, local_path):
         raise NotImplementedError
