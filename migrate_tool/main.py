@@ -9,6 +9,8 @@ import os
 from os import path
 
 from migrate_tool.migrator import ThreadMigrator
+#from gevent import monkey
+#monkey.patch_all()
 
 import signal
 from logging.config import dictConfig

@@ -61,11 +61,10 @@ class Worker(object):
                 except OSError as e:
                     # directory is exists
                     logger.debug(str(e))
-                # 判断文件是否已经存在
                 try:
-                    ret = self._input_service.exists(task_path)
+                    ret = self._input_service.exists(task)
                     if ret:
-                        logger.info("{file_path} exists".format(file_path=task_path))
+                        logger.info("{file_path} exists".format(file_path=task_path.encode('utf-8')))
                         self._succ += 1
                         self._filter.add(task_path)
                         continue
@@ -73,7 +72,7 @@ class Worker(object):
                     logger.exception("exists failed")
 
                 try:
-                    self._output_service.download(task_path, localpath)
+                    self._output_service.download(task, localpath)
                 except Exception as e:
                     logger.exception("download failed")
                     self._fail += 1
@@ -81,9 +80,9 @@ class Worker(object):
                     continue
 
                 try:
-                    self._input_service.upload(task_path, localpath)
+                    self._input_service.upload(task, localpath)
                 except Exception as e:
-                    logger.exception("upload {} failed".format(task_path.encode('utf-8')))
+                    logger.exception("upload {} failed".format(task['store_path'].encode('utf-8')))
                     self._fail += 1
                     fail_logger.error(task_path)
                     continue

@@ -3,7 +3,7 @@
 
 from migrate_tool import storage_service
 from qcloud_cos import CosClient
-from qcloud_cos import UploadFileRequest, StatFileRequest
+from qcloud_cos import UploadFileRequest, StatFileRequest, DelFileRequest
 
 from logging import getLogger
 
@@ -31,8 +31,8 @@ class CosV4StorageService(storage_service.StorageService):
     def download(self, cos_path, local_path):
         raise NotImplementedError
 
-    def upload(self, cos_path, local_path):
-	
+    def upload(self, task, local_path):
+        cos_path = task['store_path']	
         if not cos_path.startswith('/'):
             cos_path = '/' + cos_path
 
@@ -42,23 +42,38 @@ class CosV4StorageService(storage_service.StorageService):
         # if isinstance(local_path, unicode):
         #    local_path.encode('utf-8')
         insert_only = 0 if self._overwrite else 1
+        logger.info("insert_only: {0}".format(str(insert_only)))
         upload_request = UploadFileRequest(self._bucket, unicode(cos_path), unicode(local_path), insert_only=insert_only)
-        upload_file_ret = self._cos_api.upload_file(upload_request)
+        for i in range(5):
+            try:
+                upload_file_ret = self._cos_api.upload_file(upload_request)
 
-        if upload_file_ret[u'code'] != 0:
-            raise OSError("UploadError: " + str(upload_file_ret))
+                if upload_file_ret[u'code'] != 0:
+                    # raise OSError("UploadError: " + str(upload_file_ret))
+                    logger.warn("upload failed")
+                else:
+                    break
+            except Exception as e:
+                logger.exception("upload failed")
+        else:
+            raise IOError("upload failed")
 
     def list(self):
         raise NotImplementedError
 
-    def exists(self, _path):
+    def exists(self, task):
+        _path = task['store_path']
+        _size = task['size']
+
         if not _path.startswith('/'):
             _path = '/' + _path
 
-        logger.info("exists: " + str(_path))
+        logger.info("func: exists: " + str(_path))
         if self._prefix_dir:
             _path = self._prefix_dir + _path
 
+        if isinstance(_path, str):
+            _path = _path.decode('utf-8')
         request = StatFileRequest(self._bucket, _path)
         ret = self._cos_api.stat_file(request)
         logger.info("ret: " + str(ret))
@@ -73,4 +88,6 @@ class CosV4StorageService(storage_service.StorageService):
                 size=ret['data']['filesize']
             ))
             return False
+        elif ret['data']['filelen'] != _size:
+            return False        
         return True
