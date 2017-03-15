@@ -163,6 +163,28 @@ accesskeysecret=
 bucket=
 ```
 
+### COS v3 迁移到 COS v4
+
+```bash
+[common]
+workspace=
+
+[source]
+type=cosv3
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=           
+
+[destination]
+type=cosv4
+region=
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=
+```
+
 ### 常见错误与解决办法
 
 1. pip 命令不存在。 使用 apt install python-pip 或者 yum install python-pip 命令安装PIP。
