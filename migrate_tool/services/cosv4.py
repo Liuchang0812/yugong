@@ -63,7 +63,7 @@ class CosV4StorageService(storage_service.StorageService):
         if not _path.startswith('/'):
             _path = '/' + _path
         logger = getLogger(__name__)
-        logger.info("func: exists: " + str(_path))
+        # logger.info("func: exists: " + str(_path))
         if self._prefix_dir:
             _path = self._prefix_dir + _path
 
@@ -71,11 +71,11 @@ class CosV4StorageService(storage_service.StorageService):
             _path = _path.decode('utf-8')
         request = StatFileRequest(self._bucket, _path)
         ret = self._cos_api.stat_file(request)
-        logger.info("ret: " + str(ret))
+        logger.debug("ret: " + str(ret))
         # import json
         # v = json.loads(ret)
         if ret['code'] != 0:
-            logger.warn("error code: " + str(ret['code']))
+            # logger.warn("error code: " + str(ret['code']))
             return False
         if ret['data']['filelen'] != ret['data']['filesize']:
             logger.warn("file is broken, filelen: {len}, filesize: {size}".format(

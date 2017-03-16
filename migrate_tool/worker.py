@@ -3,6 +3,7 @@ from Queue import Queue, Empty
 from threading import Thread
 from os import path, makedirs
 from logging import getLogger
+from threading import Lock
 
 logger = getLogger(__name__)
 fail_logger = getLogger('migrate_tool.fail_file')
@@ -21,6 +22,7 @@ class Worker(object):
         self._stop = False
         self._succ = 0
         self._fail = 0
+        self._lock = Lock()
 
     def __work_thread(self):
 
@@ -62,8 +64,9 @@ class Worker(object):
                     ret = self._input_service.exists(task)
                     if ret:
                         logger.info("{file_path} exists".format(file_path=task_path.encode('utf-8')))
-                        self._succ += 1
-                        self._filter.add(task_path)
+                        with self._lock:
+                            self._succ += 1
+                            self._filter.add(task_path)
                         continue
                 except Exception as e:
                     logger.exception("exists failed")
@@ -102,8 +105,9 @@ class Worker(object):
                 else:
                     logger.info("inc succ with {}".format(task_path.encode('utf-8')))
 
-                self._succ += 1
-                self._filter.add(task_path)
+                with self._lock:
+                    self._succ += 1
+                    self._filter.add(task_path)
             except Exception:
                 logger.exception("try except for deleting file")
 
