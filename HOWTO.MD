@@ -167,6 +167,26 @@ appid=
 accesskeysecret=
 bucket=
 ```
+### 迁移COSv3
+```bash
+[common]
+workspace=
+
+[source]
+type=cosv3
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=                     # http请求的超时时间
+
+[destination]
+type=cosv4
+region=
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=
+```
 
 ### 常见错误与解决办法
 
