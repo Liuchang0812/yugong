@@ -78,7 +78,7 @@ class ThreadMigrator(BaseMigrator):
                 if self._stop:
                     break
 
-                print type(task)
+                # print type(task)
                 object_name_ = task.key
                 if isinstance(object_name_, unicode):
                     object_name_ = object_name_.encode('utf-8')
