@@ -2,7 +2,7 @@
 
 
 from migrate_tool import storage_service
-
+from migrate_tool import task
 from logging import getLogger
 import requests
 import urlparse
@@ -18,19 +18,25 @@ class UrlListService(storage_service.StorageService):
         self._chunk_size = 1024
 
     def download(self, task, local_path):
-        if isinstance(task, dict) and 'url_path' in task:
 
-            url_path = task['url_path']
+        url_path = task.other
 
-            ret = requests.get(url_path, timeout=self._timeout)
-
-            with open(local_path, 'wb') as fd:
-                for chunk in ret.iter_content(self._chunk_size):
-                    fd.write(chunk)
-
+        for i in range(5):
+            try:
+                ret = requests.get(url_path, timeout=self._timeout)
+                if ret.status_code == 200:
+                    with open(local_path, 'wb') as fd:
+                        for chunk in ret.iter_content(self._chunk_size):
+                            fd.write(chunk)
+                        fd.flush()
+                    break
+                else:
+                    # print "task: ", task
+                    raise IOError("NOTICE: download failed")
+            except:
+                logger.exception("download failed")
         else:
-            # print "task: ", task
-            raise ValueError("task is invalid, task should be a dict and contains url_path")
+            raise IOError("NOTICE: download failed with retry 5")
 
     def upload(self, task, local_path):
         raise NotImplementedError
@@ -43,7 +49,8 @@ class UrlListService(storage_service.StorageService):
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
                     logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': line.strip()})))
-                    yield {'store_path': ret.path.strip()[1:], 'url_path': line.strip()}
+                    yield task.Task(ret.path.strip()[1:], None, line.strip())
+
                 except Exception:
                     logger.warn("{} is invalid".format(line))
 

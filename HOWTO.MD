@@ -3,7 +3,7 @@
 迁移工具支持将S3, OSS, Qiniu，文件列表等文件迁移到COS对象存储。工具只支持在 linux/macos 下运行，系统自带的Python版本在2.6以上。
 
 ## 系统依赖
-工具运行平台为\*nix，需要有Python2.6及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
+工具运行平台为\*nix，需要有Python2.7及以上环境，同时机器应该安装pip, gcc与python-dev。您可以使用系统自带的包管理器安装相关依赖。
 
 在centos上，使用如下命令安装：
 ```bash
@@ -110,6 +110,8 @@ accesskeyid=               # qiniu 的 accesskeyid
 accesskeysecret=           # qiniu 的 accesskeysecret
 bucket=                    # 要迁移的qiniu的bucket
 domain_url=                # qiniu 的下载域名
+prefix=dir1                # 要迁移的目录，如果要迁移整个bucket，删除此行
+
 
 [destination]
 type=cosv4
@@ -119,6 +121,7 @@ appid=                     # cos 的 appid
 accesskeysecret=           # cos 的 accesskeysecret
 bucket=sdktest             # cos 的 bucket
 prefix_dir=/dir21          # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
+overwrite=true             # 是否覆盖上传，如果不需要，删除此行
 ```
 
 ### 迁移S3
@@ -131,12 +134,14 @@ workspace=/tmp/tmp21
 type=s3
 accesskeyid=               # s3 的 accesskey id
 accesskeysecret=           # s3 的 accesskey secret
-bucket=                    # s3 的要迁移的bucket名
+bucket=                    # s3 的要迁移的bucket名
+prefix=dir1                # s3 的要迁移的目录，如果要迁移整个bucket，删除此行
 
 [destination]
 type=cosv4
 region=shanghai
 accesskeyid=
+
 appid=
 accesskeysecret=
 bucket=
@@ -154,6 +159,26 @@ workspace=
 type=url
 url_list_file=/tmp/urllist.txt   # 要迁移的文件url列表文件，文件每一行为一个完整的url
 timeout=3                        # http请求的超时时间
+
+[destination]
+type=cosv4
+region=
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=
+```
+### 迁移COSv3
+```bash
+[common]
+workspace=
+
+[source]
+type=cosv3
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=                     # http请求的超时时间
 
 [destination]
 type=cosv4
@@ -190,5 +215,7 @@ bucket=
 
 1. pip 命令不存在。 使用 apt install python-pip 或者 yum install python-pip 命令安装PIP。
 2. 使用pip安装迁移工具不成功。尝试执行 sudo pip install cos_migrate_tool。
-3. 对于一直迁移不成功的文件，可能是COS上有同名残损文件，可以尝试指定 `overwrite=true` 参数来覆盖。
-4. 迁移前工具会先判断文件是否已经在COS上，提示文件不存在的错误的正常的
+3. 提示找不到argparse，使用pip安装 sudo pip install argparse
+4. 对于一直迁移不成功的文件，可能是COS上有同名残损文件，可以尝试指定 `overwrite=true` 参数来覆盖。
+5. 迁移前工具会先判断文件是否已经在COS上，提示文件不存在的错误的正常的
+

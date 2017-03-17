@@ -38,6 +38,7 @@ setup(
             'oss=migrate_tool.services.oss:OssStorageService',
             'qiniu=migrate_tool.services.qiniu:QiniuStorageService',
             'cosv4=migrate_tool.services.cosv4:CosV4StorageService',
+            'cosv3=migrate_tool.services.cosv3:CosV3StorageService',
             'url=migrate_tool.services.url_list:UrlListService',
             's3=migrate_tool.services.s3:S3StorageService',
         ]

@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from logging import getLogger
 from migrate_tool import storage_service
+from migrate_tool.task import Task
 from qiniu import Auth
 from qiniu import BucketManager
 import requests
@@ -24,8 +25,10 @@ class QiniuStorageService(storage_service.StorageService):
         self._auth = Auth(accesskeyid, accesskeysecret)
         self._domain = kwargs['domain_url']
         self._qiniu_api = BucketManager(self._auth)
+        self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
 
-    def download(self, cos_path, local_path):
+    def download(self, task, local_path):
+        cos_path = task.key
         if isinstance(local_path, str):
             local_path = local_path.decode('utf-8')
         if cos_path.startswith('/'):
@@ -42,20 +45,32 @@ class QiniuStorageService(storage_service.StorageService):
         # print private_url
         logger.debug("private url: " + private_url)
 
-        ret = requests.get(private_url)
+        for i in range(20):
+            try:
+                ret = requests.get(private_url)
 
-        if ret.status_code != 200:
-            raise SystemError("download file from qiniu failed")
-        # print local_path.encode('utf-8')
-        with open(local_path.encode('utf-8'), 'wb') as fd:
-            for chunk in ret.iter_content(1024):
-                fd.write(chunk)
+                if ret.status_code != 200:
+                    raise SystemError("download file from qiniu failed")
+
+                with open(local_path.encode('utf-8'), 'wb') as fd:
+                    for chunk in ret.iter_content(1024):
+                        fd.write(chunk)
+                if task.size is not None:
+                    from os import path
+                    if path.getsize(local_path.encode('utf-8')) != task.size:
+                        raise IOError("Download failed error")
+                    else:
+                        logger.info("download successful")
+                        break
+            except:
+                pass
+        else:
+            raise IOError("Download failed error")
 
     def upload(self, cos_path, local_path):
         raise NotImplementedError
 
     def list(self):
-        prefix = None
         limit = 100
         delimiter = None
         marker = None
@@ -64,7 +79,7 @@ class QiniuStorageService(storage_service.StorageService):
 
         while not eof:
             try:
-                ret, eof, info = self._qiniu_api.list(self._bucket, prefix, marker, limit, delimiter)
+                ret, eof, info = self._qiniu_api.list(self._bucket, self._prefix, marker, limit, delimiter)
                 if ret is None:
                     logger.warn("ret is None")
                     if info.error == 'bad token':
@@ -75,7 +90,7 @@ class QiniuStorageService(storage_service.StorageService):
 
                 for i in ret['items']:
                     logger.info("yield new object: {}".format(i['key']))
-                    yield i['key']
+                    yield Task(i['key'], i['fsize'], None)
 
                 if eof is True:
                     logger.info("eof is {}".format(eof))
