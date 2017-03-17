@@ -14,14 +14,15 @@ import requests
 
 logger = getLogger(__name__)
 
+
 def to_utf8(s):
-  if isinstance(s, unicode):
-    return s.encode('utf-8')
-  else:
-    return s
+    if isinstance(s, unicode):
+        return s.encode('utf-8')
+    else:
+        return s
+
 
 class CosV3StorageService(storage_service.StorageService):
-
     def __init__(self, *args, **kwargs):
 
         appid = int(kwargs['appid'])
@@ -36,44 +37,46 @@ class CosV3StorageService(storage_service.StorageService):
         self._cos_api = CosClient(appid, accesskeyid, accesskeysecret)
         self._bucket = bucket
         self._appid = appid
-	self._http_session = requests.session()
+        self._http_session = requests.session()
         self._auth = Auth(CredInfo(appid, accesskeyid, accesskeysecret))
+
     def __sign(self, key):
         import time
         ex = int(time.time()) + 300
-        
+
         return self._auth.sign_download(self._bucket, key, ex)
 
     def download(self, task, local_path):
         key = task.key
         url_tmpl = 'http://{bucket}-{appid}.cos.myqcloud.com/{key}?sign={sign}'
         import urllib
-        uri = url_tmpl.format(bucket=self._bucket, appid=self._appid, key=urllib.quote(to_utf8(key)), sign=self.__sign(key))
+        uri = url_tmpl.format(bucket=self._bucket, appid=self._appid, key=urllib.quote(to_utf8(key)),
+                              sign=self.__sign(key))
         session = self._http_session
 
-	for i in range(5):
-	    try:
-		with closing(session.get(uri, stream=True)) as ret:
-		    if ret.status_code in [200, 206]:
-			with open(local_path, 'wb') as f:
-			    for chunk in ret.iter_content(chunk_size=1024):
-				if chunk:
-				    f.write(chunk)
-			    f.flush()
-		    else:
-			raise IOError("download failed " + ret.text)
-		from os import path
-		if task.size is not None and path.getsize(local_path) != task.size:
-		    raise IOError("download failed with retry {times}".format(times=i))
-		else:
-		    break
+        for i in range(5):
+            try:
+                with closing(session.get(uri, stream=True)) as ret:
+                    if ret.status_code in [200, 206]:
+                        with open(local_path, 'wb') as f:
+                            for chunk in ret.iter_content(chunk_size=1024):
+                                if chunk:
+                                    f.write(chunk)
+                            f.flush()
+                    else:
+                        raise IOError("download failed " + ret.text)
+                from os import path
+                if task.size is not None and path.getsize(local_path) != task.size:
+                    raise IOError("download failed with retry {times}".format(times=i))
+                else:
+                    break
 
-	    except Exception:
+            except Exception:
                 logger.exception("download failed with retry {times}".format(times=i))
                 import time
-	        time.sleep(2**min(5,i))
-	else:
-	    raise IOError("download failed!")
+                time.sleep(2 ** min(5, i))
+        else:
+            raise IOError("download failed!")
 
     def upload(self, task, local_path):
         raise NotImplementedError
@@ -89,7 +92,7 @@ class CosV3StorageService(storage_service.StorageService):
                 request = ListFolderRequest(bucket_name=self._bucket, cos_path=path, context=_context)
                 ret = self._cos_api.list_folder(request)
             except Exception:
-                logger.exception("list failed") 
+                logger.exception("list failed")
                 max_retry -= 1
                 continue
 
@@ -109,29 +112,27 @@ class CosV3StorageService(storage_service.StorageService):
                     else:
                         _sub_dir = "{prefix}{filename}/".format(prefix=path, filename=item['name'])
                         if isinstance(_sub_dir, str):
-                          _sub_dir = _sub_dir.decode('utf-8')
+                            _sub_dir = _sub_dir.decode('utf-8')
                         for i in self.__dfs_list(_sub_dir):
-                          yield i
-                        # directory
+                            yield i
+                            # directory
 
             if max_retry == 0:
                 _finish = True
                 logger.error("reach max retry times, finish this directory {}".format(path))
 
         logger.info("finish directory {}".format(path))
-            
-	
+
     def list(self):
-	to_list_dirs = []
-	
-	if self._prefix is None:
-	    prefix = u'/' 
+        to_list_dirs = []
+
+        if self._prefix is None:
+            prefix = u'/'
         else:
             prefix = unicode(self._prefix)
 
-	for i in self.__dfs_list(prefix):
+        for i in self.__dfs_list(prefix):
             yield i
-	
-	
+
     def exists(self, task):
         raise NotImplementedError
