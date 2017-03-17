@@ -94,6 +94,7 @@ appid=                     # cos 的 appid
 accesskeysecret=           # cos 的 accesskeysecret
 bucket=sdktest             # cos 的 bucket
 prefix_dir=/dir21          # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
+overwrite=true             # 覆盖cos上已有的同名文件，如果不需要，请删除该行
 ```
 
 ###  迁移qiniu
@@ -188,8 +189,33 @@ accesskeysecret=
 bucket=
 ```
 
+### COS v3 迁移到 COS v4
+
+```bash
+[common]
+workspace=
+
+[source]
+type=cosv3
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=           
+
+[destination]
+type=cosv4
+region=
+accesskeyid=
+appid=
+accesskeysecret=
+bucket=
+```
+
 ### 常见错误与解决办法
 
 1. pip 命令不存在。 使用 apt install python-pip 或者 yum install python-pip 命令安装PIP。
 2. 使用pip安装迁移工具不成功。尝试执行 sudo pip install cos_migrate_tool。
 3. 提示找不到argparse，使用pip安装 sudo pip install argparse
+4. 对于一直迁移不成功的文件，可能是COS上有同名残损文件，可以尝试指定 `overwrite=true` 参数来覆盖。
+5. 迁移前工具会先判断文件是否已经在COS上，提示文件不存在的错误的正常的
+
