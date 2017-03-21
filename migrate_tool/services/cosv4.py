@@ -4,7 +4,9 @@
 from logging import getLogger
 from migrate_tool import storage_service
 from qcloud_cos import CosClient
+
 from qcloud_cos import UploadFileRequest, StatFileRequest, ListFolderRequest, DownloadFileRequest
+
 
 from migrate_tool.task import Task
 
@@ -133,6 +135,18 @@ class CosV4StorageService(storage_service.StorageService):
 
             if max_retry == 0:
                 _finish = True
+
+    def exists(self, task):
+        _path = task.key
+        _size = task.size
+
+        if not _path.startswith('/'):
+            _path = '/' + _path
+        logger = getLogger(__name__)
+        # logger.info("func: exists: " + str(_path))
+        if self._prefix_dir:
+            _path = self._prefix_dir + _path
+
 
     def exists(self, task):
         _path = task.key
