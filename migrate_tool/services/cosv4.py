@@ -4,8 +4,26 @@
 from logging import getLogger
 from migrate_tool import storage_service
 from qcloud_cos import CosClient
-from qcloud_cos import UploadFileRequest, StatFileRequest
+from qcloud_cos import UploadFileRequest, StatFileRequest, ListFolderRequest, DownloadFileRequest
 
+from migrate_tool.task import Task
+
+
+def to_unicode(s):
+    if isinstance(s, str):
+        return s.decode('utf-8')
+    else:
+        return s
+
+
+def to_utf8(s):
+    if isinstance(s, unicode):
+        return s.encode('utf-8')
+    else:
+        return s
+
+
+logger = getLogger(__name__)
 
 class CosV4StorageService(storage_service.StorageService):
 
@@ -24,9 +42,35 @@ class CosV4StorageService(storage_service.StorageService):
         self._cos_api = CosClient(appid, accesskeyid, accesskeysecret, region=region)
         self._bucket = bucket
         self._overwrite = kwargs['overwrite'] == 'true' if 'overwrite' in kwargs else False
+        self._max_retry = 20
 
-    def download(self, cos_path, local_path):
-        raise NotImplementedError
+    def download(self, task, local_path):
+        # self._oss_api.get_object_to_file(urllib.unquote(cos_path).encode('utf-8'), local_path)
+        for i in range(20):
+            logger.info("download file with rety {0}".format(i))
+            import os
+            try:
+                os.remove(task.key)
+            except:
+                pass
+            req = DownloadFileRequest(self._bucket, task.key, local_path)
+            ret = self._cos_api.download_file(req)
+            # self._oss_api.get_object_to_file(task.key, local_path)
+            logger.debug(str(ret))
+
+            if task.size is None:
+                logger.info("task's size is None, skip check file size on local")
+                break
+
+            from os import path
+            if path.getsize(local_path) != int(task.size):
+                logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
+                                                                                      size2=task.size))
+            else:
+                logger.info("Download Successfully, break")
+                break
+        else:
+            raise IOError("Download Failed with 20 retry")
 
     def upload(self, task, local_path):
         cos_path = task.key
@@ -54,7 +98,41 @@ class CosV4StorageService(storage_service.StorageService):
             raise IOError("upload failed")
 
     def list(self):
-        raise NotImplementedError
+        for i in self.dfs(self._prefix_dir):
+            yield i
+
+    def dfs(self, path):
+        print "DFS: {path}".format(path=to_utf8(path))
+        _finish = False
+        _context = u''
+        max_retry = self._max_retry
+
+        path = to_unicode(path)
+
+        while not _finish:
+            request = ListFolderRequest(bucket_name=self._bucket, cos_path=path, context=_context)
+            ret = self._cos_api.list_folder(request)
+
+            if ret['code'] != 0:
+                max_retry -= 1
+            else:
+                _finish = ret['data']['listover']
+                _context = ret['data']['context']
+                for item in ret['data']['infos']:
+                    if 'filelen' in item:
+                        try:
+                            key = "{prefix}{filename}".format(prefix=path, filename=item['name'])
+                            yield Task(key, item['filelen'], None)
+                        except:
+                            pass
+                    else:
+                        _sub_dir = "{prefix}{filename}".format(prefix=path.encode('utf-8'),
+                                                               filename=item['name'].encode('utf-8'))
+                        for i in self.dfs(_sub_dir):
+                            yield i
+
+            if max_retry == 0:
+                _finish = True
 
     def exists(self, task):
         _path = task.key
