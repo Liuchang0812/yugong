@@ -91,6 +91,7 @@ class CosV4StorageService(storage_service.StorageService):
                 upload_file_ret = self._cos_api.upload_file(upload_request)
 
                 if upload_file_ret[u'code'] != 0:
+                    logger.warn("upload failed:" + str(upload_file_ret))
                     raise OSError("UploadError: " + str(upload_file_ret))
                 else:
                     break
@@ -100,8 +101,12 @@ class CosV4StorageService(storage_service.StorageService):
             raise IOError("upload failed")
 
     def list(self):
-        for i in self.dfs(self._prefix_dir):
-            yield i
+        if self._prefix_dir is None:
+            for i in self.dfs('/'):
+                yield i
+        else:
+	    for i in self.dfs(self._prefix_dir):
+                yield i
 
     def dfs(self, path):
         print "DFS: {path}".format(path=to_utf8(path))
