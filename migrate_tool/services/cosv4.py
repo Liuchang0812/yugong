@@ -27,6 +27,7 @@ def to_utf8(s):
 
 logger = getLogger(__name__)
 
+
 class CosV4StorageService(storage_service.StorageService):
 
     def __init__(self, *args, **kwargs):
@@ -105,7 +106,7 @@ class CosV4StorageService(storage_service.StorageService):
             for i in self.dfs('/'):
                 yield i
         else:
-	    for i in self.dfs(self._prefix_dir):
+            for i in self.dfs(self._prefix_dir):
                 yield i
 
     def dfs(self, path):
@@ -151,7 +152,6 @@ class CosV4StorageService(storage_service.StorageService):
         # logger.info("func: exists: " + str(_path))
         if self._prefix_dir:
             _path = self._prefix_dir + _path
-
 
     def exists(self, task):
         _path = task.key
