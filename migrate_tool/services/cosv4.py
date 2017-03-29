@@ -153,17 +153,6 @@ class CosV4StorageService(storage_service.StorageService):
         if self._prefix_dir:
             _path = self._prefix_dir + _path
 
-    def exists(self, task):
-        _path = task.key
-        _size = task.size
-
-        if not _path.startswith('/'):
-            _path = '/' + _path
-        logger = getLogger(__name__)
-        # logger.info("func: exists: " + str(_path))
-        if self._prefix_dir:
-            _path = self._prefix_dir + _path
-
         if isinstance(_path, str):
             _path = _path.decode('utf-8')
         request = StatFileRequest(self._bucket, _path)
