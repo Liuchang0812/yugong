@@ -1,8 +1,8 @@
 crcmod==1.7
 leveldb==0.194
 oss2==2.2.0
-qcloud-cos-v4==0.0.13
 qiniu==7.0.9.1
 requests==2.11.1
 boto==2.43.0
 qcloud-cos-v3
+qcloud-cos-v4
