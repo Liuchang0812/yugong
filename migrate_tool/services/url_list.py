@@ -63,11 +63,22 @@ class UrlListService(storage_service.StorageService):
         with open(self._url_list_file, 'r') as f:
             for line in f:
                 try:
-                    ret = urlparse.urlparse(line)
+                    field = line.split()
+                    if len(field) < 1:
+                        logger.warn("{} is invalid".format(line))
+                        continue
+                    check_value = None
+                    url_path = None
+                    if len(field) == 1:
+                        url_path = field[0]
+                    else:
+                        check_value = field[0].strip()
+                        url_path = field[1]
+                    ret = urlparse.urlparse(url_path)
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
-                    logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': line.strip()})))
-                    yield task.Task(ret.path.strip()[1:], None, line.strip())
+                    logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': url_path.strip()})))
+                    yield task.Task(ret.path.strip()[1:], check_value, url_path.strip())
 
                 except Exception:
                     logger.warn("{} is invalid".format(line))

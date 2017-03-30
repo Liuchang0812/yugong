@@ -1,3 +1,4 @@
+coscmd==0.1.8
 crcmod==1.7
 leveldb==0.194
 oss2==2.2.0
