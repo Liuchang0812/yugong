@@ -17,35 +17,39 @@ class UrlListService(storage_service.StorageService):
         self._url_list_file = kwargs['url_list_file']
         self._timeout = float(kwargs['timeout'])
         self._chunk_size = 1024
+        self._validator_method = None
         if kwargs.has_key("validator"):
-            if kwargs['validator'] == "sha1":
-                self._validator = hashlib.sha1()
-            elif kwargs['validator'] == "md5":
-                self._validator = hashlib.md5()
-            else:
-                self._validator = None
-        else:
-            self._validator = None
+            self._validator_method = kwargs['validator']
 
     def download(self, task, local_path):
 
         url_path = task.other
         expected_crc = task.size # size stores the sha1 or md5 of file
 
+        validator = None
+        if self._validator_method:
+            if self._validator_method == "sha1":
+                validator = hashlib.sha1()
+            elif self._validator_method == "md5":
+                validator = hashlib.md5()
+            else:
+                validator = None
+        
         for i in range(5):
             try:
                 ret = requests.get(url_path, timeout=self._timeout)
                 if ret.status_code == 200:
                     with open(local_path, 'wb') as fd:
                         for chunk in ret.iter_content(self._chunk_size):
-                            if self._validator:
-                                self._validator.update(chunk)
+                            if validator:
+                                validator.update(chunk)
                             fd.write(chunk)
                         fd.flush()
                     # validate 
-                    if self._validator:
-                         actual_crc = self._validator.hexdigest()
+                    if validator:
+                         actual_crc = validator.hexdigest()
                          if actual_crc != expected_crc:
+                             logger.debug("{}".format(str({'expected_crc:' : expected_crc, 'actual_crc:': actual_crc})))
                              raise IOError("NOTICE: downloaded file content not valid")
                     break
                 else:
