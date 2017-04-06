@@ -26,16 +26,16 @@ class UrlListService(storage_service.StorageService):
         url_path = task.other
         expected_crc = task.size # size stores the sha1 or md5 of file
 
-        validator = None
-        if self._validator_method:
-            if self._validator_method == "sha1":
-                validator = hashlib.sha1()
-            elif self._validator_method == "md5":
-                validator = hashlib.md5()
-            else:
-                validator = None
-        
         for i in range(5):
+            validator = None
+	    if self._validator_method:
+		if self._validator_method == "sha1":
+	            validator = hashlib.sha1()
+		elif self._validator_method == "md5":
+		    validator = hashlib.md5()
+		else:
+	            validator = None
+        
             try:
                 ret = requests.get(url_path, timeout=self._timeout)
                 if ret.status_code == 200:
@@ -48,7 +48,8 @@ class UrlListService(storage_service.StorageService):
                     # validate 
                     if validator:
                          actual_crc = validator.hexdigest()
-                         if actual_crc != expected_crc:
+                         actual_crc_upper = actual_crc.upper()
+                         if actual_crc != expected_crc and actual_crc_upper != expected_crc:
                              logger.debug("{}".format(str({'expected_crc:' : expected_crc, 'actual_crc:': actual_crc})))
                              raise IOError("NOTICE: downloaded file content not valid")
                     break
