@@ -50,12 +50,12 @@ log_config = {
         },
         'migrate_tool.fail_file': {
             'handlers': ['error_file'],
-            'level': 'INFO',
+            'level': 'WARN',
             'propagate': False
         },
         'requests.packages': {
             'handlers': ['default'],
-            'level': 'INFO',
+            'level': 'WARN',
             'propagate': True
         }
     }
