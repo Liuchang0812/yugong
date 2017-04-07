@@ -19,8 +19,8 @@ def long_description():
         return fileobj.read()
 
 setup(
-    name='cos_migrate_tool_test',
-    version='0.1.12',
+    name='cos_migrate_tool',
+    version='0.1.11',
     packages=['migrate_tool', 'migrate_tool.services'],
     url='https://www.qcloud.com/',
     license='MIT',
