@@ -30,12 +30,12 @@ log_config = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'formatter': 'standard',
             'class': 'logging.StreamHandler',
         },
         'error_file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'formatter': 'error',
             'class': 'logging.FileHandler',
             'filename': 'fail_files.txt',
@@ -45,17 +45,17 @@ log_config = {
     'loggers': {
         '': {
             'handlers': ['default'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True
         },
         'migrate_tool.fail_file': {
             'handlers': ['error_file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False
         },
         'requests.packages': {
             'handlers': ['default'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True
         }
     }
