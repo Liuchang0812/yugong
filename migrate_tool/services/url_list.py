@@ -18,24 +18,24 @@ class UrlListService(storage_service.StorageService):
         self._timeout = float(kwargs['timeout'])
         self._chunk_size = 1024
         self._validator_method = None
-        if kwargs.has_key("validator"):
+        if 'validator' in kwargs:
             self._validator_method = kwargs['validator']
 
     def download(self, task, local_path):
 
         url_path = task.other
-        expected_crc = task.size # size stores the sha1 or md5 of file
+        expected_crc = task.size  # size stores the sha1 or md5 of file
 
         for i in range(5):
             validator = None
-	    if self._validator_method:
-		if self._validator_method == "sha1":
-	            validator = hashlib.sha1()
-		elif self._validator_method == "md5":
-		    validator = hashlib.md5()
-		else:
-	            validator = None
-        
+            if self._validator_method:
+                if self._validator_method == "sha1":
+                    validator = hashlib.sha1()
+                elif self._validator_method == "md5":
+                    validator = hashlib.md5()
+                else:
+                    validator = None
+
             try:
                 ret = requests.get(url_path, timeout=self._timeout)
                 if ret.status_code == 200:
@@ -45,13 +45,13 @@ class UrlListService(storage_service.StorageService):
                                 validator.update(chunk)
                             fd.write(chunk)
                         fd.flush()
-                    # validate 
+                    # validate
                     if validator:
-                         actual_crc = validator.hexdigest()
-                         actual_crc_upper = actual_crc.upper()
-                         if actual_crc != expected_crc and actual_crc_upper != expected_crc:
-                             logger.debug("{}".format(str({'expected_crc:' : expected_crc, 'actual_crc:': actual_crc})))
-                             raise IOError("NOTICE: downloaded file content not valid")
+                        actual_crc = validator.hexdigest()
+                        actual_crc_upper = actual_crc.upper()
+                        if actual_crc != expected_crc and actual_crc_upper != expected_crc:
+                            logger.debug("{}".format(str({'expected_crc:' : expected_crc, 'actual_crc:': actual_crc})))
+                            raise IOError("NOTICE: downloaded file content not valid")
                     break
                 else:
                     # print "task: ", task

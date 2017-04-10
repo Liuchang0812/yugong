@@ -7,6 +7,7 @@ from coscmd.client import CosS3Client, CosConfig, CosS3Auth
 from migrate_tool.task import Task
 import requests
 
+
 def to_unicode(s):
     if isinstance(s, str):
         return s.decode('utf-8')
@@ -22,6 +23,7 @@ def to_utf8(s):
 
 
 logger = getLogger(__name__)
+
 
 class CosS3StorageService(storage_service.StorageService):
 
@@ -42,7 +44,8 @@ class CosS3StorageService(storage_service.StorageService):
         else:
             self._part_size = 1
 
-        conf = CosConfig(appid=appid, access_id=str(accesskeyid), access_key=str(accesskeysecret), region=region, bucket=bucket, part_size=self._part_size)
+        conf = CosConfig(appid=appid, access_id=str(accesskeyid), access_key=str(accesskeysecret),
+                         region=region, bucket=bucket, part_size=self._part_size)
         self._cos_client = CosS3Client(conf)
         self._bucket = bucket
         self._overwrite = kwargs['overwrite'] == 'true' if 'overwrite' in kwargs else False
@@ -72,13 +75,13 @@ class CosS3StorageService(storage_service.StorageService):
         insert_only = 0 if self._overwrite else 1
         mp = self._cos_client.multipart_upload_from_filename(local_path, cos_path)
         for i in range(10):
-            rt = mp.init_mp() 
+            rt = mp.init_mp()
             if rt:
                 break
             logger.warn("init multipart upload failed")
         else:
             raise IOError("upload failed")
-                
+
         for i in range(10):
             rt = mp.upload_parts()
             if rt:
@@ -86,7 +89,7 @@ class CosS3StorageService(storage_service.StorageService):
             logger.warn("multipart upload part failed")
         else:
             raise IOError("upload failed")
-                    
+
         for i in range(10):
             rt = mp.complete_mp()
             if rt:
@@ -96,7 +99,7 @@ class CosS3StorageService(storage_service.StorageService):
             raise IOError("upload failed")
 
     def list(self):
-         raise NotImplementedError
+        raise NotImplementedError
 
     def exists(self, task):
         cos_path = task.key
