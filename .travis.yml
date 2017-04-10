@@ -6,8 +6,9 @@ install:
 - python setup.py install
 - pip freeze
 - pip install pep8
-script:
+before_script:
 - pep8 migrate_tool --max-line-length=140
+script:
 - nosetests
 deploy:
   provider: pypi
