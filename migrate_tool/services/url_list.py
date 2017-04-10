@@ -50,7 +50,7 @@ class UrlListService(storage_service.StorageService):
                         actual_crc = validator.hexdigest()
                         actual_crc_upper = actual_crc.upper()
                         if actual_crc != expected_crc and actual_crc_upper != expected_crc:
-                            logger.debug("{}".format(str({'expected_crc:' : expected_crc, 'actual_crc:': actual_crc})))
+                            logger.debug("{}".format(str({'expected_crc:': expected_crc, 'actual_crc:': actual_crc})))
                             raise IOError("NOTICE: downloaded file content not valid")
                     break
                 else:
