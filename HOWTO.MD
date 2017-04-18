@@ -7,12 +7,12 @@
 
 在centos上，使用如下命令安装：
 ```bash
-sudo yum install python-pip python-devel gcc gcc-c++
+sudo yum install python-pip python-devel gcc gcc-c++ libxml2-devel
 ```
 
 在ubuntu/debian上，使用如下命令安装：
 ```bash
-sudo apt-get install python-pip python-dev gcc gcc-c++
+sudo apt-get install python-pip python-dev gcc gcc-c++ libxml2-devel
 ```
 
 ## 安装方法
