@@ -19,6 +19,9 @@ class S3StorageService(storage_service.StorageService):
         self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
         _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
         self._bucket_api = _s3_api.get_bucket(bucket)
+        self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
+        if self._prefix.startswith('/'):
+            self._prefix = self._prefix[1:]
 
     def download(self, task, local_path):
         for i in range(20):
