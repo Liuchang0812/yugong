@@ -16,11 +16,11 @@ class S3StorageService(storage_service.StorageService):
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
         bucket = kwargs['bucket']
-        region = kwargs['region'] 
+        region = kwargs['region']
         self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
 
         if region == 'cn-north-1':
-            _s3_api = S3Connection(aws_access_key_id=accesskeyid, 
+            _s3_api = S3Connection(aws_access_key_id=accesskeyid,
                                    aws_secret_access_key=accesskeysecret, 
                                    host='s3.cn-north-1.amazonaws.com.cn')
         else:
