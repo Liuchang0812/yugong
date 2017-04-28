@@ -24,7 +24,8 @@ class S3StorageService(storage_service.StorageService):
                                    aws_secret_access_key=accesskeysecret, 
                                    host='s3.cn-north-1.amazonaws.com.cn')
         else:
-            _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
+            _s3_api = S3Connection(aws_access_key_id=accesskeyid,
+                                   aws_secret_access_key=accesskeysecret)
 
         _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
         self._bucket_api = _s3_api.get_bucket(bucket)
