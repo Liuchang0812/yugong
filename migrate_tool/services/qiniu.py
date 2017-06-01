@@ -47,7 +47,7 @@ class QiniuStorageService(storage_service.StorageService):
 
         for i in range(20):
             try:
-                ret = requests.get(private_url,stream=True)
+                ret = requests.get(private_url, stream=True)
 
                 if ret.status_code != 200:
                     raise SystemError("download file from qiniu failed")
