@@ -223,7 +223,7 @@ region=
 appid=
 accesskeysecret=
 bucket=         
-prefix_dir=/foo/   # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
+prefix_dir=/foo   # cos 的目录，迁移的文件都会位于该目录下，不配置该项则迁移到根目录
 
 [destination]
 type=cosv4
