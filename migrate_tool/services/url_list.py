@@ -37,7 +37,7 @@ class UrlListService(storage_service.StorageService):
                     validator = None
 
             try:
-                ret = requests.get(url_path, timeout=self._timeout, stream = True)
+                ret = requests.get(url_path, timeout=self._timeout, stream=True)
                 if ret.status_code == 200:
                     with open(local_path, 'wb') as fd:
                         for chunk in ret.iter_content(self._chunk_size):
