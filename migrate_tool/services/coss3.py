@@ -2,7 +2,8 @@
 
 from logging import getLogger
 from migrate_tool import storage_service
-from coscmd.client import CosS3Client, CosConfig, CosS3Auth
+from coscmd.cos_client import CosS3Client, CosConfig
+from coscmd.cos_auth.CosS3Auth
 
 from migrate_tool.task import Task
 import requests
