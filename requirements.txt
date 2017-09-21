@@ -6,4 +6,3 @@ boto==2.43.0
 qcloud-cos-v3
 qcloud-cos-v4
 coscmd==1.7.7
-requests==2.18.4
