@@ -2,8 +2,7 @@
 
 from logging import getLogger
 from migrate_tool import storage_service
-from coscmd.cos_client import CosS3Client, CosConfig
-from coscmd.cos_auth import CosS3Auth
+from qcloud_cos_v5 import CosS3Client, CosConfig
 
 from migrate_tool.task import Task
 import requests
@@ -45,11 +44,10 @@ class CosS3StorageService(storage_service.StorageService):
         else:
             self._part_size = 1
 
-        conf = CosConfig(appid=appid, access_id=str(accesskeyid), access_key=str(accesskeysecret),
-                         region=region, bucket=bucket, part_size=self._part_size)
-        self._cos_client = CosS3Client(conf)
+        conf = CosConfig(Appid=appid, Access_id=str(accesskeyid), Access_key=str(accesskeysecret),
+                         Region=region)
+        self._cos_client = CosS3Client(conf=conf, retry=5)
         self._bucket = bucket
-        self._overwrite = kwargs['overwrite'] == 'true' if 'overwrite' in kwargs else False
         self._max_retry = 20
         self._appid = appid
         self._region = region
@@ -73,45 +71,24 @@ class CosS3StorageService(storage_service.StorageService):
         if cos_path.startswith('/'):
             cos_path = cos_path[1:]
 
-        insert_only = 0 if self._overwrite else 1
-        mp = self._cos_client.multipart_upload_from_filename(local_path, cos_path)
-        for i in range(10):
-            rt = mp.init_mp()
-            if rt:
-                break
-            logger.warn("init multipart upload failed")
-        else:
-            raise IOError("upload failed")
-
-        for i in range(10):
-            rt = mp.upload_parts()
-            if rt:
-                break
-            logger.warn("multipart upload part failed")
-        else:
-            raise IOError("upload failed")
-
-        for i in range(10):
-            rt = mp.complete_mp()
-            if rt:
-                break
-            logger.warn("finish upload part failed")
-        else:
-            raise IOError("upload failed")
+        try:
+            fp = open(local_path, "rb")
+            self._cos_client.put_object(Bucket=self._bucket, Body=fp, Key=cos_path)
+            fp.close()
+        except e:           
+            logger.warn("upload failed" + e)
+            fp.close()
+            raise OSError("uploaderror")
 
     def list(self):
         raise NotImplementedError
 
     def exists(self, task):
         cos_path = task.key
-        cos_path = 'http://' + str(self._bucket) + '-' + str(self._appid) + '.' + str(self._region) + '.myqcloud.com' + '/' + str(cos_path)
+        #cos_path = 'http://' + str(self._bucket) + '-' + str(self._appid) + '.' + str(self._region) + '.myqcloud.com' + '/' + str(cos_path)
         logger.debug('{}'.format(str({'cos_path:': cos_path})))
         try:
-            ret = requests.head(cos_path, timeout=10, auth=CosS3Auth(self._accesskeyid, self._accesskeysecret))
-            if ret.status_code != 200:
-                return False
-            else:
-                return True
+            self._cos_client.head_object(Key=cos_path, Bucket=self._bucket)
         except:
             logger.exception("head cos file failed")
             return False
