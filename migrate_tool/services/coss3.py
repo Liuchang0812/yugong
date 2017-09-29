@@ -46,7 +46,7 @@ class CosS3StorageService(storage_service.StorageService):
 
         conf = CosConfig(Appid=appid, Access_id=str(accesskeyid), Access_key=str(accesskeysecret),
                          Region=region)
-        self._cos_client = CosS3Client(conf=conf, retry=5)
+        self._cos_client = CosS3Client(conf=conf, retry=1)
         self._bucket = bucket
         self._max_retry = 20
         self._appid = appid
@@ -71,13 +71,16 @@ class CosS3StorageService(storage_service.StorageService):
         if cos_path.startswith('/'):
             cos_path = cos_path[1:]
 
-        try:
-            fp = open(local_path, "rb")
-            self._cos_client.put_object(Bucket=self._bucket, Body=fp, Key=cos_path)
-            fp.close()
-        except e:           
-            logger.warn("upload failed" + e)
-            fp.close()
+        for j in range(5):
+            try:
+                fp = open(local_path, "rb")
+                self._cos_client.put_object(Bucket=self._bucket, Body=fp, Key=cos_path)
+                fp.close()
+                break
+            except Exception as e:           
+                logger.warn('upload failed %s' % str(e))
+                fp.close()
+        else:
             raise OSError("uploaderror")
 
     def list(self):
