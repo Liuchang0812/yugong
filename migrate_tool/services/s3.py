@@ -12,11 +12,12 @@ logger = getLogger(__name__)
 ssl.match_hostname = lambda cert, hostname: True
 
 class S3StorageService(storage_service.StorageService):
+    
     def __init__(self, *args, **kwargs):
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
         bucket = kwargs['bucket']
-        region = kwargs['region']  if 'region' in kwargs else ''
+        region = kwargs['region'] if 'region' in kwargs else ''
         self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
         if region == 'cn-north-1':
             _s3_api = S3Connection(aws_access_key_id=accesskeyid,
