@@ -12,8 +12,8 @@ logger = getLogger(__name__)
 ssl.match_hostname = lambda cert, hostname: True
 
 class S3StorageService(storage_service.StorageService):
-    
     def __init__(self, *args, **kwargs):
+        
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
         bucket = kwargs['bucket']
