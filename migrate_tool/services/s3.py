@@ -9,6 +9,8 @@ from boto.s3.connection import S3Connection
 
 logger = getLogger(__name__)
 
+import ssl
+ssl.match_hostname = lambda cert, hostname: True
 
 class S3StorageService(storage_service.StorageService):
     def __init__(self, *args, **kwargs):
@@ -16,8 +18,12 @@ class S3StorageService(storage_service.StorageService):
         accesskeyid = kwargs['accesskeyid']
         accesskeysecret = kwargs['accesskeysecret']
         bucket = kwargs['bucket']
+        region = kwargs['region']  if 'region' in kwargs else ''
         self._prefix = kwargs['prefix'] if 'prefix' in kwargs else ''
-        _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
+        if region == 'cn-north-1':
+            _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret,host="s3."+region+'.amazonaws.com.cn')
+        else:
+            _s3_api = S3Connection(aws_access_key_id=accesskeyid, aws_secret_access_key=accesskeysecret)
         self._bucket_api = _s3_api.get_bucket(bucket)
 
     def download(self, task, local_path):
