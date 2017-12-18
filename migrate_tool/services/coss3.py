@@ -77,7 +77,7 @@ class CosS3StorageService(storage_service.StorageService):
                 self._cos_client.put_object(Bucket=self._bucket, Body=fp, Key=cos_path)
                 fp.close()
                 break
-            except Exception as e:           
+            except Exception as e:
                 logger.warn('upload failed %s' % str(e))
                 fp.close()
         else:
@@ -88,7 +88,6 @@ class CosS3StorageService(storage_service.StorageService):
 
     def exists(self, task):
         cos_path = task.key
-        #cos_path = 'http://' + str(self._bucket) + '-' + str(self._appid) + '.' + str(self._region) + '.myqcloud.com' + '/' + str(cos_path)
         logger.debug('{}'.format(str({'cos_path:': cos_path})))
         try:
             self._cos_client.head_object(Key=cos_path, Bucket=self._bucket)
