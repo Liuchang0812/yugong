@@ -9,6 +9,7 @@ import os
 from os import path
 
 from migrate_tool.migrator import ThreadMigrator
+from migrate_tool.filter import Filter
 
 import signal
 from logging.config import dictConfig
@@ -73,7 +74,9 @@ def loads_services():
 
 def create_parser():
     parser_ = ArgumentParser()
-    parser_.add_argument('-c', '--conf', type=file, required=True, help="specify your config")
+    parser_.add_argument('-c', '--conf', type=file, required=False, help="specify your config")
+    parser_.add_argument('-r', '--reset', type=file, required=False, help="reset status.it will clear filter and doing_task_db. specify your config")
+    parser_.add_argument('-l', '--list', type=file, required=False, help="list tasks which are runing. specify your config")
     return parser_
 
 
@@ -82,7 +85,32 @@ def main_thread():
     parser = create_parser()
     opt = parser.parse_args()
     conf = SafeConfigParser()
-    conf.readfp(opt.conf)
+    if opt.conf:
+        conf.readfp(opt.conf)
+    elif opt.reset:
+        conf.readfp(opt.reset)
+    elif opt.list:
+        conf.readfp(opt.list)
+    else:
+        parser.print_help()
+        return
+    
+
+    workspace_ = conf.get('common', 'workspace')
+    try:
+        os.makedirs(workspace_)
+    except OSError:
+        pass
+
+    if opt.reset:
+        Filter(workspace_).reset()
+        return
+
+    if opt.list:
+        keys = Filter(workspace_).list_doing_task()
+        for k in keys:
+            print k
+        return
 
     output_service_conf = dict(conf.items('source'))
     input_service_conf = dict(conf.items('destination'))
@@ -90,11 +118,14 @@ def main_thread():
         _threads = conf.getint('common', 'threads')
     else:
         _threads = 10
-    workspace_ = conf.get('common', 'workspace')
-    try:
-        os.makedirs(workspace_)
-    except OSError:
-        pass
+
+
+    if conf.has_option('common', 'record_succ'):
+        _record_succ = conf.getboolean('common', 'record_succ')
+    else:
+        _record_succ = True
+
+    print _record_succ
 
     log_config['handlers']['error_file']['filename'] = path.join(workspace_, 'failed_files.txt')
     dictConfig(log_config)
@@ -106,7 +137,8 @@ def main_thread():
     migrator = ThreadMigrator(input_service=input_service,
                               output_service=output_service,
                               work_dir=conf.get('common', 'workspace'),
-                              threads=_threads)
+                              threads=_threads,
+                              record_succ=_record_succ)
     migrator.start()
 
     import time
@@ -121,8 +153,8 @@ def main_thread():
     except KeyboardInterrupt:
         state = migrator.status()
         print state
-        import sys
-        sys.exit()
+        #import sys
+        #sys.exit()
 
     migrator.stop()
     state = migrator.status()
@@ -130,6 +162,8 @@ def main_thread():
 
 
 def main_():
+    main_thread()
+    '''
     thread_ = Thread(target=main_thread)
     thread_.daemon = True
     thread_.start()
@@ -137,7 +171,11 @@ def main_():
         while thread_.is_alive():
             thread_.join(2)
     except KeyboardInterrupt:
+        if not g_record_succ:
+            print 'process remine'
+	#thread_.join()
         print 'exiting'
+    '''
 
 
 if __name__ == '__main__':

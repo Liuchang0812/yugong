@@ -41,13 +41,14 @@ class ThreadMigrator(BaseMigrator):
 
     """
 
-    def __init__(self, input_service, output_service, work_dir=None, threads=10, *args, **kwargs):
+    def __init__(self, input_service, output_service, work_dir=None, threads=10, record_succ=True, *args, **kwargs):
 
         self._input_service = input_service
         self._output_service = output_service
+        self._record_succ = record_succ
 
         self._work_dir = work_dir or os.getcwd()
-        self._filter = Filter(self._work_dir)
+        self._filter = Filter(self._work_dir, record_succ)
 
         self._worker = Worker(work_dir=self._work_dir,
                               file_filter=self._filter,
@@ -72,10 +73,12 @@ class ThreadMigrator(BaseMigrator):
 
     def work_thread(self):
         assert self._output_service is not None
+        marker = self._filter.get_marker() #if record_succ is true,always return empty
         try:
-            for task in self._output_service.list():
+            for task in self._output_service.list(marker):
 
                 if self._stop:
+                    logger.info('stop list,break...')
                     break
 
                 # print type(task)
@@ -89,7 +92,9 @@ class ThreadMigrator(BaseMigrator):
 
                 else:
                     # not migrated
+                    self._filter.add_doing_task(object_name_)
                     self._worker.add_task(task)
+                    self._filter.set_marker(object_name_)
                     logger.info("{} has been submitted, waiting for migrating".format(object_name_))
             else:
                 self._finish = True

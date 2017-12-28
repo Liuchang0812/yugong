@@ -112,15 +112,16 @@ class Worker(object):
                 logger.exception("try except for deleting file")
 
             finally:
-                    import os
-                    if isinstance(localpath, unicode):
-                        localpath = localpath.encode('utf-8')
+                self._filter.del_doing_task(task_path)
+                import os
+                if isinstance(localpath, unicode):
+                    localpath = localpath.encode('utf-8')
 
-                    try:
-                        os.remove(localpath)
-                        os.removedirs(path.dirname(localpath))
-                    except OSError:
-                        pass
+                try:
+                    os.remove(localpath)
+                    os.removedirs(path.dirname(localpath))
+                except OSError:
+                    pass
 
     def add_task(self, task):
         # blocking
