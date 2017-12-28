@@ -101,7 +101,7 @@ class CosV4StorageService(storage_service.StorageService):
         else:
             raise IOError("upload failed")
 
-    def list(self):
+    def list(self, marker):
         if self._prefix_dir is None:
             for i in self.dfs('/'):
                 yield i

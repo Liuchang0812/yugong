@@ -64,7 +64,7 @@ class UrlListService(storage_service.StorageService):
     def upload(self, task, local_path):
         raise NotImplementedError
 
-    def list(self):
+    def list(self, marker):
         with open(self._url_list_file, 'r') as f:
             for line in f:
                 try:

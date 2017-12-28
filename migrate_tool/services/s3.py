@@ -53,7 +53,7 @@ class S3StorageService(storage_service.StorageService):
     def upload(self, cos_path, local_path):
         raise NotImplementedError
 
-    def list(self):
+    def list(self, marker):
         for obj in self._bucket_api.list(prefix=self._prefix):
             if obj.name[-1] == '/':
                 continue

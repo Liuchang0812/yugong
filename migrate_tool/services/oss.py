@@ -49,8 +49,8 @@ class OssStorageService(storage_service.StorageService):
     def upload(self, cos_path, local_path):
         raise NotImplementedError
 
-    def list(self):
-        for obj in oss2.ObjectIterator(self._oss_api, prefix=self._prefix):
+    def list(self, marker):
+        for obj in oss2.ObjectIterator(self._oss_api, prefix=self._prefix, marker=marker):
             if obj.key[-1] == '/':
                 continue
             logger.info("yield new object: {}".format(obj.key))

@@ -123,7 +123,7 @@ class CosV3StorageService(storage_service.StorageService):
 
         logger.info("finish directory {}".format(path))
 
-    def list(self):
+    def list(self, marker):
         if self._prefix is None:
             prefix = u'/'
         else:

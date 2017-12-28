@@ -70,7 +70,7 @@ class QiniuStorageService(storage_service.StorageService):
     def upload(self, cos_path, local_path):
         raise NotImplementedError
 
-    def list(self):
+    def list(self, marker):
         limit = 100
         delimiter = None
         marker = None
