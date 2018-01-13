@@ -163,14 +163,12 @@ class CosV4StorageService(storage_service.StorageService):
         if ret['code'] != 0:
             # logger.warn("error code: " + str(ret['code']))
             return False
-        if ret['data']['filelen'] != ret['data']['filesize']:
+        if int(ret['data']['filelen']) != int(ret['data']['filesize']):
             logger.warn("file is broken, filelen: {len}, filesize: {size}".format(
                 len=ret['data']['filelen'],
                 size=ret['data']['filesize']
             ))
             return False
-        elif _size is not None and ret['data']['filelen'] != _size:
-            return False
-        elif ret['data']['filelen'] != _size:
+        elif _size is not None and int(ret['data']['filelen']) != int(_size):
             return False
         return True
