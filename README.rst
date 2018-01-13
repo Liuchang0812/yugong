@@ -14,6 +14,10 @@
 cos_migrate_tool
 ##########################
 
+.. warn::
+    发现第三方sdk存在bug，可能会导致迁移数据不完整，正在添加更强的校验方式来避免第三方sdk bug带来的影响，新版本会在 01.25号之前release，建议暂时不要使用该工具
+    
+    
 A simple tool for migrating data between object storage services.
 
 INSTALL
