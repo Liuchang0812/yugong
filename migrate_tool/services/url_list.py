@@ -45,6 +45,14 @@ class UrlListService(storage_service.StorageService):
                                 validator.update(chunk)
                             fd.write(chunk)
                         fd.flush()
+                    
+                    # check Content-Length at first
+                    content_length = ret.headers['content_length']
+                    from os import path
+                    if path.getsize(local_path) != int(content_length):
+                        logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
+                                                                                      size2=content_length))
+                        raise IOError("NOTICE: downloaded file content is not complete")
                     # validate
                     if validator:
                         actual_crc = validator.hexdigest()
