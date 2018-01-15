@@ -47,15 +47,12 @@ class UrlListService(storage_service.StorageService):
                         fd.flush()
                     
                     # check Content-Length at first
-                    content_length = ret.headers['content_length']
+                    
                     from os import path
-                    if content_length != task.size:
-                        logger.error("object size in not consistent in GET/HEAD")
-                        raise IOError
                         
-                    if path.getsize(local_path) != int(content_length):
+                    if path.getsize(local_path) != int(task.size):
                         logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
-                                                                                      size2=content_length))
+                                                                                      size2=task.size))
                         raise IOError("NOTICE: downloaded file content is not complete")
                     # validate
                     if validator:
@@ -80,7 +77,7 @@ class UrlListService(storage_service.StorageService):
         with open(self._url_list_file, 'r') as f:
             for line in f:
                 try:
-                    field = line.split('\t')
+                    field = line.split('')
                     if len(field) < 1:
                         logger.warn("{} is invalid".format(line))
                         continue
