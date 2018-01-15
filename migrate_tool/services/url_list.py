@@ -49,6 +49,10 @@ class UrlListService(storage_service.StorageService):
                     # check Content-Length at first
                     content_length = ret.headers['content_length']
                     from os import path
+                    if content_length != task.size:
+                        logger.error("object size in not consistent in GET/HEAD")
+                        raise IOError
+                        
                     if path.getsize(local_path) != int(content_length):
                         logger.error("Download Failed, size1: {size1}, size2: {size2}".format(size1=path.getsize(local_path),
                                                                                       size2=content_length))
@@ -90,8 +94,19 @@ class UrlListService(storage_service.StorageService):
                     ret = urlparse.urlparse(url_path)
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
+                        continue
+                    # use HEAD to get object size
+                    file_size = None
+                    try:
+                        response = requests.head(url_path, timeout=5)
+                        if response.status_code == 200:
+                            file_size = response.headers['content-length']
+                    except Exception as e:
+                        logger.exception("HEAD object failed with " + str(e))
+                        continue
+
                     logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': url_path.strip()})))
-                    yield task.Task(ret.path.strip()[1:], None, url_path.strip(), check_value)
+                    yield task.Task(ret.path.strip()[1:], file_size, url_path.strip(), check_value)
 
                 except Exception:
                     logger.warn("{} is invalid".format(line))
