@@ -90,6 +90,8 @@ class UrlListService(storage_service.StorageService):
                     ret = urlparse.urlparse(url_path)
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
+                        continue
+                    
                     logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': url_path.strip()})))
                     yield task.Task(ret.path.strip()[1:], None, url_path.strip(), check_value)
 
