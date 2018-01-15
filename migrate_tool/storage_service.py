@@ -12,7 +12,7 @@ class StorageService(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def download(self, path, localpath):
+    def download(self, task, localpath):
         """ downloads object from service, and saves to local disk
 
         :param path: path on Services
@@ -22,7 +22,7 @@ class StorageService(object):
         pass
 
     @abstractmethod
-    def upload(self, path, localpath):
+    def upload(self, task, localpath):
         """ uploads local file to service
 
         :param path: path on Service
@@ -32,10 +32,10 @@ class StorageService(object):
         pass
 
     @abstractmethod
-    def exists(self, path):
+    def exists(self, task):
         """ query for existence of object
 
-        :param path: path on Service
+        :param task: path on Service
         :return:
         """
         pass

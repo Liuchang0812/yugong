@@ -41,9 +41,9 @@ class Worker(object):
                     import time
                     time.sleep(1)
                     continue
-
+            
             task_path = task.key
-
+            
             if task_path.startswith('/'):
                 task_path = task_path[1:]
 
@@ -52,6 +52,14 @@ class Worker(object):
 
             import uuid
             localpath = unicode(path.join(self._work_dir, uuid.uuid1().hex))
+
+            if task.size is None:
+                logger.warn("{file_path} task doesn't contains size attribute".format(
+                    file_path=task_path.encode('utf-8')
+                ))
+                self._fail += 1
+                fail_logger.error(task_path)
+                continue
 
             try:
                 try:
@@ -100,14 +108,25 @@ class Worker(object):
                 except Exception as e:
                     logger.exception(str(e))
                     continue
-                if isinstance(task_path, unicode):
-                    logger.info("inc succ with {}".format(task_path.encode('utf-8')))
-                else:
-                    logger.info("inc succ with {}".format(task_path.encode('utf-8')))
 
-                with self._lock:
-                    self._succ += 1
-                    self._filter.add(task_path)
+                try:
+                    ret = self._input_service.exists(task)
+                    if ret:
+                        if isinstance(task_path, unicode):
+                            logger.info("inc succ with {}".format(task_path.encode('utf-8')))
+                        else:
+                            logger.info("inc succ with {}".format(task_path.encode('utf-8')))
+
+                        with self._lock:
+                            self._succ += 1
+                            self._filter.add(task_path)
+                        continue
+                    else :
+                        logger.exception("there is not expected object in service, you need to re-run this application again")
+                
+                except Exception as e:
+                    logger.exception("exists failed")
+
             except Exception:
                 logger.exception("try except for deleting file")
 
