@@ -2,4 +2,5 @@
 
 from collections import namedtuple
 
-Task = namedtuple("Task", ["key", "size", "other"])
+# digest is md5/sha1, we use it in URL-list service
+Task = namedtuple("Task", ["key", "size", "other", "digest"])

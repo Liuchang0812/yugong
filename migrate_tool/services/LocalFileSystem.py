@@ -37,7 +37,7 @@ class LocalFileSystem(storage_service.StorageService):
     def list(self):
         for file in os.listdir(self._workspace):
             from os import path
-            yield Task(file, path.getsize(file), None)
+            yield Task(file, path.getsize(file), None, None)
 
 
 def make():

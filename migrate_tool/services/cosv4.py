@@ -130,7 +130,7 @@ class CosV4StorageService(storage_service.StorageService):
                     if 'filelen' in item:
                         try:
                             key = "{prefix}{filename}".format(prefix=path, filename=item['name'])
-                            yield Task(key, item['filelen'], None)
+                            yield Task(key, item['filelen'], None, None)
                         except:
                             pass
                     else:

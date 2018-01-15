@@ -90,7 +90,7 @@ class QiniuStorageService(storage_service.StorageService):
 
                 for i in ret['items']:
                     logger.info("yield new object: {}".format(i['key']))
-                    yield Task(i['key'], i['fsize'], None)
+                    yield Task(i['key'], i['fsize'], None, None)
 
                 if eof is True:
                     logger.info("eof is {}".format(eof))
