@@ -54,7 +54,7 @@ class OssStorageService(storage_service.StorageService):
             if obj.key[-1] == '/':
                 continue
             logger.info("yield new object: {}".format(obj.key))
-            yield Task(obj.key, obj.size, None)
+            yield Task(obj.key, obj.size, None, None)
 
     def exists(self, _path):
         raise NotImplementedError

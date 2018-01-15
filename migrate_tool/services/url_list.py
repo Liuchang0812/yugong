@@ -24,7 +24,7 @@ class UrlListService(storage_service.StorageService):
     def download(self, task, local_path):
 
         url_path = task.other
-        expected_crc = task.size  # size stores the sha1 or md5 of file
+        expected_crc = task.digest  # size stores the sha1 or md5 of file
 
         for i in range(5):
             validator = None
@@ -91,7 +91,7 @@ class UrlListService(storage_service.StorageService):
                     if ret.path == '':
                         logger.warn("{} is invalid, No path".format(line))
                     logger.info("yield new object: {}".format(str({'store_path': ret.path.strip(), 'url_path': url_path.strip()})))
-                    yield task.Task(ret.path.strip()[1:], check_value, url_path.strip())
+                    yield task.Task(ret.path.strip()[1:], None, url_path.strip(), check_value)
 
                 except Exception:
                     logger.warn("{} is invalid".format(line))

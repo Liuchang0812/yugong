@@ -108,7 +108,7 @@ class CosV3StorageService(storage_service.StorageService):
                     if 'filelen' in item:
                         # file
                         key = "{prefix}{filename}".format(prefix=path, filename=item['name'])
-                        yield Task(key, item['filelen'], None)
+                        yield Task(key, item['filelen'], None, None)
                     else:
                         _sub_dir = "{prefix}{filename}/".format(prefix=path, filename=item['name'])
                         if isinstance(_sub_dir, str):
