@@ -77,7 +77,7 @@ class UrlListService(storage_service.StorageService):
         with open(self._url_list_file, 'r') as f:
             for line in f:
                 try:
-                    field = line.split('')
+                    field = line.split()
                     if len(field) < 1:
                         logger.warn("{} is invalid".format(line))
                         continue
