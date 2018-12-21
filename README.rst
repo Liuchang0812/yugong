@@ -14,6 +14,11 @@
 cos_migrate_tool
 ##########################
 
+已弃用，请使用 cos_migrate_tool_v5
+-----------
+
+工具已弃用，请使用最新版 `cos_migrate_tool_v5 <https://github.com/tencentyun/cos_migrate_tool_v5>`_ 
+
 建议使用 0.3.1 之后的版本
     
 A simple tool for migrating data between object storage services.
